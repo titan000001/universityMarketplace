@@ -120,6 +120,8 @@ Distributed under the ISC License.
 ---
 
 ## 📞 Contact
-Project Maintainer - [Your Name]
+Project Maintainer - Titan 
+                  - Tamim
+                  -Sumona
 
-Project Link: [https://github.com/yourusername/university-marketplace](https://github.com/yourusername/university-marketplace)
+Project Link: https://github.com/titan000001/universityMarketplace

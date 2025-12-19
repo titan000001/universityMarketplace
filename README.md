@@ -2,6 +2,7 @@
 
 **A modern, feature-rich platform for students to buy, sell, and connect safely.**
 
+<<<<<<< HEAD
 # 🎓 University Student Marketplace
 
 **A modern, feature-rich platform for students to buy, sell, and connect safely.**
@@ -10,6 +11,10 @@
 
 ### 📢 Promotional Poster
 ![Poster](public/images/poster.png)
+=======
+<img width="2848" height="1504" alt="unimarket-poster" src="https://github.com/user-attachments/assets/f4149a78-43a2-4a2d-a822-6fd129613ed2" />
+
+>>>>>>> e90010410e9323d46d1d75a7de1903e1aa05ad18
 
 ## 🚀 About The Project
 The **University Student Marketplace** is a full-stack web application designed to create a trusted economy within university campuses. Unlike generic marketplaces, this platform focuses on the specific needs of students: finding textbooks, dorm furniture, and electronics quickly, safely, and locally.
@@ -126,6 +131,8 @@ Distributed under the ISC License.
 ---
 
 ## 📞 Contact
-Project Maintainer - [Your Name]
+Project Maintainer - Titan 
+                  - Tamim
+                  -Sumona
 
-Project Link: [https://github.com/yourusername/university-marketplace](https://github.com/yourusername/university-marketplace)
+Project Link: https://github.com/titan000001/universityMarketplace

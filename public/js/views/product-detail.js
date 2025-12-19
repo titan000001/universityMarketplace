@@ -70,11 +70,11 @@ const initProductDetail = async (param) => {
 
         detailContent.innerHTML = `
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
+                <div class="animate__animated animate__fadeInLeft">
                     <img src="${product.image_url}" alt="${product.title}" class="w-full h-auto rounded-lg shadow-lg mb-6">
                     ${mapHtml}
                 </div>
-                <div>
+                <div class="animate__animated animate__fadeInRight">
                     <h1 class="text-3xl font-bold mb-2 dark:text-white">${product.title}</h1>
                     <div class="flex items-center mb-4">
                         <p class="text-3xl text-indigo-600 dark:text-indigo-400 font-bold mr-4">$${product.price}</p>
@@ -149,6 +149,7 @@ const initProductDetail = async (param) => {
                 } else {
                     await apiRequest('/wishlist', 'POST', { productId: product.id });
                 }
+                updateNav(); // Update the wishlist count in navbar
                 initProductDetail(param); // Re-render the view to update the button
             });
         }

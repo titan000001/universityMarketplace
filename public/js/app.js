@@ -1,6 +1,7 @@
 // public/js/app.js
 import { router, navigate } from './router.js';
 import { getCart } from './services/cart.js';
+import { apiRequest } from './services/api.js';
 
 const navLinks = document.getElementById('nav-links');
 const mobileMenu = document.getElementById('mobile-menu');
@@ -42,7 +43,7 @@ function parseJwt(token) {
     }
 }
 
-function updateNav() {
+async function updateNav() {
     const token = localStorage.getItem('token');
     const navLinks = document.getElementById('nav-links');
     const mobileMenu = document.getElementById('mobile-menu');
@@ -65,7 +66,7 @@ function updateNav() {
             <a href="#/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Home</a>
             <a href="#/about" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">About</a>
             <a href="#/cart" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Cart <span id="cart-count" class="bg-red-500 text-white rounded-full px-2 text-xs">0</span></a>
-            <a href="#/wishlist" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Wishlist</a>
+            <a href="#/wishlist" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Wishlist <span id="wishlist-count" class="bg-pink-500 text-white rounded-full px-2 text-xs hidden">0</span></a>
             <a href="#/sell" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Sell Item</a>
             ${isAdmin ? '<a href="#/admin" class="px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-100">Admin</a>' : ''}
             <div class="relative inline-block text-left group">
@@ -77,6 +78,7 @@ function updateNav() {
                     <div class="bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 border border-gray-100 dark:border-gray-700">
                         <a href="#/profile/${user.userId}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">My Profile</a>
                         <a href="#/my-profile" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">My Listings</a>
+                        <a href="#/contact" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Support</a>
                         <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Logout</a>
                     </div>
                 </div>

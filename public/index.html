@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>University Student Marketplace</title>
-    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="icon" type="image/jpg" href="/images/favicon-v2.jpg">
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -21,8 +21,56 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <!-- Socket.io Client -->
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        /* Flashy Button Shimmer */
+        @keyframes shimmer {
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: -200% center;
+            }
+        }
+
+        .btn-flashy {
+            background: linear-gradient(120deg, #4f46e5 0%, #8b5cf6 20%, #f59e0b 50%, #8b5cf6 80%, #4f46e5 100%);
+            background-size: 200% auto;
+            transition: 0.5s;
+        }
+
+        .btn-flashy:hover {
+            animation: shimmer 2s linear infinite;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        }
+
+        /* 3D Card Hover */
+        .card-3d {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card-3d:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.3);
+            z-index: 10;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark .glass-panel {
+            background: rgba(17, 24, 39, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200">
@@ -32,7 +80,9 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center">
-                    <a href="/" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">UniMarket</a>
+                    <a href="/" class="flex items-center gap-2">
+                        <img src="/images/logo.png" alt="UniMarket" class="h-10 w-auto">
+                    </a>
                 </div>
                 <div id="nav-links" class="hidden md:block flex items-center">
                     <!-- Links will be dynamically inserted here by app.js -->
@@ -60,7 +110,10 @@
     <!-- Footer -->
     <footer class="bg-white dark:bg-gray-800 transition-colors duration-200">
         <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center text-gray-500 dark:text-gray-400">
-            <p>&copy; 2025 University Student Marketplace. A Project for Learning.</p>
+            <p>&copy; 2025 University Student Marketplace. A Project for Learning.
+                <span class="mx-2">|</span>
+                <a href="#/contact" class="hover:text-indigo-500 underline decoration-dotted">Contact Support</a>
+            </p>
         </div>
     </footer>
 

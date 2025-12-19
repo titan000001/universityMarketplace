@@ -14,6 +14,7 @@ import { checkoutView, initCheckout } from './views/checkout.js';
 import { updateNav } from './app.js';
 import { chatView, initChat } from './views/chat.js';
 import { aboutView, initAbout } from './views/about.js';
+import { contactView, initContact } from './views/contact.js';
 
 const routes = {
     '/': { view: homeView, init: initHome },
@@ -29,6 +30,7 @@ const routes = {
     '/admin': { view: adminView, init: initAdmin },
     '/chat/:params': { view: chatView, init: initChat },
     '/about': { view: aboutView, init: initAbout },
+    '/contact': { view: contactView, init: initContact },
     '/checkout': { view: checkoutView, init: initCheckout }
 };
 

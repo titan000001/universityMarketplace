@@ -16,7 +16,7 @@ const homeView = () => `
                 <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="px-8 py-3 bg-white text-indigo-700 font-bold rounded-full shadow-lg hover:bg-gray-100 hover:shadow-xl transition-all transform hover:-translate-y-1">
                     Browse Items
                 </button>
-                <a href="#/sell" class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-500 hover:shadow-xl transition-all transform hover:-translate-y-1 border border-indigo-400 backdrop-blur-sm bg-opacity-90">
+                <a href="#/sell" class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-full shadow-lg btn-flashy border border-indigo-400 backdrop-blur-sm bg-opacity-90">
                     Start Selling
                 </a>
             </div>
@@ -48,8 +48,8 @@ const initHome = async () => {
 
     const renderProducts = (productsToRender) => {
         if (productsToRender.length > 0) {
-            productGrid.innerHTML = productsToRender.map(p => `
-                <a href="#/products/${p.id}" class="block bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow flex flex-col h-full">
+            productGrid.innerHTML = productsToRender.map((p, i) => `
+                <a href="#/products/${p.id}" class="block bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-3d flex flex-col h-full animate__animated animate__fadeInUp" style="animation-delay: ${i * 100}ms">
                     <img src="${p.image_url}" alt="${p.title}" class="w-full h-48 object-cover">
                     <div class="p-4 flex flex-col flex-grow justify-between">
                         <div>

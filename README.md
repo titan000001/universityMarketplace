@@ -1,138 +1,87 @@
 # 🎓 University Student Marketplace
 
-**A modern, feature-rich platform for students to buy, sell, and connect safely.**
+**A modern, trusted platform for students to buy, sell, and connect.**
 
-<<<<<<< HEAD
-# 🎓 University Student Marketplace
+![Banner](public/images/hero-banner.jpg)
 
-**A modern, feature-rich platform for students to buy, sell, and connect safely.**
-
-![Project Banner](public/images/hero-banner.jpg)
-
-### 📢 Promotional Poster
-![Poster](public/images/poster.png)
-=======
-<img width="2848" height="1504" alt="unimarket-poster" src="https://github.com/user-attachments/assets/f4149a78-43a2-4a2d-a822-6fd129613ed2" />
-
->>>>>>> e90010410e9323d46d1d75a7de1903e1aa05ad18
-
-## 🚀 About The Project
-The **University Student Marketplace** is a full-stack web application designed to create a trusted economy within university campuses. Unlike generic marketplaces, this platform focuses on the specific needs of students: finding textbooks, dorm furniture, and electronics quickly, safely, and locally.
-
-built with scalability and performance in mind, using a modular architecture that separates concerns for easier maintenance and future expansion.
-
----
+## 🚀 Overview
+The **University Student Marketplace** is a secure, campus-focused economy. Unlike generic platforms, we prioritize safety and student specific needs—from finding affordable textbooks to selling dorm essentials.
 
 ## ✨ Key Features
 
-### 🛒 Marketplace & Commerce
-- **Smart Search & Filters**: Find exactly what you need with category filters and real-time search.
-- **Price Analytics**: **"Great Deal"** badges and **"Fair Market Value"** indicators help users make informed decisions based on real-time data.
-- **Checkout System**: A complete "Reserve & Meet" flow where orders track transaction history and automatically mark items as sold.
-- **Product Tags**: Hash-tagged keywords (e.g., `#Calculus`, `#Dorm`) for better item discovery.
+### 🛒 Commerce
+- **Smart Search**: Filter by category, price, or tags (e.g., `#Textbook`).
+- **Price Analytics**: Automatically flags "Great Deals" based on market average.
+- **Secure Checkout**: "Reserve & Meet" system ensures items aren't sold twice.
 
-### 👤 Identity & Social
-- **Customizable Profiles**: Users can upload avatars, write bios, and link their social media (LinkedIn, GitHub).
-- **Real-Time Chat**: **Socket.io** integration allows instant, private communication between buyers and sellers without leaving the app.
-- **User Dashboard**: Manage your listings, view order history, and edit your profile.
+### 💬 Social & Identity
+- **Real-Time Chat**: Negotiate safely with built-in instant messaging (Socket.io).
+- **Verified Profiles**: See seller stats, department, and bio.
+- **Wishlist**: Save items for later.
 
-### 📍 Location & Safety
-- **Campus Map Integration**: Sellers can pin specific meetup spots (e.g., "Main Library") on an interactive **Leaflet.js** map.
-- **Visual Meetup Points**: Buyers see exactly where to meet on the product detail page.
-
-### 🎨 User Experience
-- **Dark Mode**: Fully supported dark/light theme switching for late-night study sessions.
-- **Responsive Design**: Optimized for mobile, tablet, and desktop.
-- **Wishlist & Cart**: Save items for later or add multiple items to your cart for a bulk checkout.
+### 📍 Campus Integrated
+- **Interactive Maps**: Pinpoint exact meetup locations (Library, Student Center) using Leaflet.js.
+- **Department Filters**: Find items relevant to your major.
 
 ---
 
 ## 🛠 Tech Stack
 
-**Frontend**
-- **Vanilla JavaScript (ESM)**: Lightweight, fast, and modular.
-- **Tailwind CSS**: Modern utility-first styling for beautiful, responsive UI.
-- **Leaflet.js**: Open-source interactive maps.
-- **Socket.io Client**: Real-time bidirectional communication.
-
-**Backend**
-- **Node.js & Express**: Robust and scalable server-side environment.
-- **MySQL**: Relational database for structured data integrity.
-- **Socket.io**: WebSocket server for chat functionality.
-- **JWT (JSON Web Tokens)**: Stateless, secure authentication.
-- **Multer**: Efficient file handling for image uploads.
-- **Bcrypt.js**: Security-first password hashing.
+- **Frontend**: Vanilla JS (ESM), Tailwind CSS, Leaflet.js, Animate.css
+- **Backend**: Node.js, Express, Socket.io
+- **Database**: MySQL (Transactional Order System)
+- **Security**: JWT Auth, BCrypt, Helmet, Rate Limiting
 
 ---
 
-## ⚙️ Installation & Setup
+## ⚡ Quick Start
 
-### Prerequisites
-- [Node.js](https://nodejs.org/en/download/) (v16+ recommended)
-- [MySQL Server](https://dev.mysql.com/downloads/mysql/)
+### 1. Requirements
+- Node.js (v18+)
+- MySQL
 
-### 1. Clone the Repository
+### 2. Installation
 ```bash
-git clone https://github.com/yourusername/university-marketplace.git
-cd university-marketplace
-```
-
-### 2. Install Dependencies
-```bash
+git clone https://github.com/titan000001/universityMarketplace.git
+cd universityMarketplace
 npm install
 ```
 
-### 3. Database Setup
-1. Create a MySQL database named `marketplace`.
-2. Run the provided schema script to create tables and seed initial data:
-   ```bash
-   node fix_schema.js
-   ```
-   *(This script automatically checks for missing tables and columns and updates them.)*
+### 3. Setup Database
+Create a MySQL database named `marketplace`, then run the schema script:
+```bash
+# Update .env first!
+node fix_schema.js
+```
 
-### 4. Environment Variables
-Create a `.env` file in the root directory:
+### 4. Configure .env
 ```env
-# Server
 PORT=3000
-
-# Database
 DB_HOST=localhost
 DB_USER=root
 DB_PASSWORD=yourpassword
 DB_DATABASE=marketplace
-
-# Security
-JWT_SECRET=your_super_secret_key
+JWT_SECRET=secret_key_here
 ```
 
-### 5. Run the Application
+### 5. Run
 ```bash
 npm start
 ```
-Visit `http://localhost:3000` in your browser.
 
 ---
 
-## 🤝 Contributing
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+## 📸 Gallery
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+![Promotional Poster](public/images/poster.png)
+
+*The marketplace home view featuring the new visual identity.*
 
 ---
 
-## 📝 License
-Distributed under the ISC License.
+## 📞 Team
+- **Titan**
+- **Tamim**
+- **Sumona**
 
----
-
-## 📞 Contact
-Project Maintainer - Titan 
-                  - Tamim
-                  -Sumona
-
-Project Link: https://github.com/titan000001/universityMarketplace
+[Check out the Repository](https://github.com/titan000001/universityMarketplace)

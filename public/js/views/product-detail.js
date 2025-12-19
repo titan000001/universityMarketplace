@@ -17,10 +17,10 @@ const productDetailView = () => `
 `;
 
 const initProductDetail = async (param) => {
-     try {
+    try {
         const [product, wishlist, comments] = await Promise.all([
             apiRequest(`/products/${param}`),
-            apiRequest('/wishlist').catch(() => []), // Allow wishlist to fail for non-logged-in users
+            localStorage.getItem('token') ? apiRequest('/wishlist').catch(() => []) : Promise.resolve([]),
             apiRequest(`/comments/${param}`)
         ]);
 
@@ -73,7 +73,7 @@ const initProductDetail = async (param) => {
         }
 
         const wishlistBtn = document.getElementById('wishlist-btn');
-        if(wishlistBtn) {
+        if (wishlistBtn) {
             wishlistBtn.addEventListener('click', async () => {
                 if (isWishlisted) {
                     await apiRequest(`/wishlist/${product.id}`, 'DELETE');
@@ -85,7 +85,7 @@ const initProductDetail = async (param) => {
         }
 
         const cartBtn = document.getElementById('cart-btn');
-        if(cartBtn) {
+        if (cartBtn) {
             cartBtn.addEventListener('click', () => {
                 if (isInCart) {
                     removeFromCart(product.id);
@@ -110,8 +110,8 @@ const initProductDetail = async (param) => {
             }
         });
 
-    } catch(error) {
-         document.getElementById('main-content').innerHTML = `<p class="text-center text-red-500">Could not find this product.</p>`;
+    } catch (error) {
+        document.getElementById('main-content').innerHTML = `<p class="text-center text-red-500">Could not find this product.</p>`;
     }
 };
 

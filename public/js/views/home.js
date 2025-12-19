@@ -33,20 +33,24 @@ const initHome = async () => {
     const renderProducts = (productsToRender) => {
         if (productsToRender.length > 0) {
             productGrid.innerHTML = productsToRender.map(p => `
-                <a href="#/products/${p.id}" class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                <a href="#/products/${p.id}" class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow flex flex-col h-full">
                     <img src="${p.image_url}" alt="${p.title}" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="font-bold text-lg">${p.title}</h3>
-                        <p class="text-indigo-600 font-semibold text-xl">$${p.price}</p>
-                        <div class="mt-2">
-                            ${p.categories ? p.categories.split(',').map(cat => `<span class="bg-gray-200 text-gray-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">${cat}</span>`).join('') : ''}
+                    <div class="p-4 flex flex-col flex-grow justify-between">
+                        <div>
+                            <h3 class="font-bold text-lg mb-1">${p.title}</h3>
+                            <p class="text-indigo-600 font-semibold text-xl mb-2">$${p.price}</p>
+                            <div class="mb-2">
+                                ${p.categories ? p.categories.split(',').map(cat => `<span class="bg-gray-100 text-gray-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full border border-gray-300">${cat}</span>`).join('') : ''}
+                            </div>
                         </div>
-                        <p class="text-gray-500 text-sm mt-2">Sold by <a href="#/profile/${p.sellerId}" class="text-indigo-600 hover:underline" onclick="event.stopPropagation()">${p.sellerName}</a></p>
+                        <p class="text-gray-500 text-sm mt-2 pt-2 border-t border-gray-100">
+                            Sold by <span class="text-indigo-600 font-medium">${p.sellerName}</span>
+                        </p>
                     </div>
                 </a>
             `).join('');
         } else {
-             productGrid.innerHTML = '<p class="text-center col-span-full">No items match your search.</p>';
+            productGrid.innerHTML = '<p class="text-center col-span-full">No items match your search.</p>';
         }
     };
 

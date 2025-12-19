@@ -6,7 +6,35 @@ const navLinks = document.getElementById('nav-links');
 const mobileMenu = document.getElementById('mobile-menu');
 const mobileMenuButton = document.getElementById('mobile-menu-button');
 
-function parseJwt (token) {
+// Dark Mode Logic
+function initDarkMode() {
+    const html = document.documentElement;
+    const isDark = localStorage.getItem('theme') === 'dark' ||
+        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+    if (isDark) {
+        html.classList.add('dark');
+    } else {
+        html.classList.remove('dark');
+    }
+}
+
+function toggleDarkMode() {
+    const html = document.documentElement;
+    if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+    } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+    }
+    updateNav(); // To update the icon
+}
+
+// Global scope for onclick
+window.toggleDarkMode = toggleDarkMode;
+
+function parseJwt(token) {
     try {
         return JSON.parse(atob(token.split('.')[1]));
     } catch (e) {
@@ -16,30 +44,57 @@ function parseJwt (token) {
 
 function updateNav() {
     const token = localStorage.getItem('token');
-    const cart = getCart();
-    let links;
-    if (token) {
-        const user = parseJwt(token);
-        const isAdmin = user && user.role === 'admin';
+    const navLinks = document.getElementById('nav-links');
+    const mobileMenu = document.getElementById('mobile-menu');
 
-        links = `
-            <a href="#/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Home</a>
-            <a href="#/sell" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Sell an Item</a>
-            <a href="#/my-profile" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">My Listings</a>
-            <a href="#/wishlist" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">My Wishlist</a>
-            <a href="#/cart" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Cart (${cart.length})</a>
-            ${isAdmin ? '<a href="#/admin" class="px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-50">Admin</a>' : ''}
-            <a href="#" id="logout-btn" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-600 hover:bg-indigo-50">Logout</a>
+    // Check Dark Mode
+    const isDark = document.documentElement.classList.contains('dark');
+    const modeIcon = isDark ? 'fa-sun' : 'fa-moon';
+    const toggleBtn = `<button onclick="toggleDarkMode()" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 ml-2">
+        <i class="fas ${modeIcon}"></i>
+    </button>`;
+
+    let linksHtml = '';
+
+    if (token) {
+        // User logged in
+        const user = JSON.parse(atob(token.split('.')[1]));
+        const isAdmin = user.role === 'admin';
+
+        linksHtml = `
+            <a href="#/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Home</a>
+            <a href="#/about" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">About</a>
+            <a href="#/cart" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Cart <span id="cart-count" class="bg-red-500 text-white rounded-full px-2 text-xs">0</span></a>
+            <a href="#/wishlist" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Wishlist</a>
+            <a href="#/sell" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Sell Item</a>
+            ${isAdmin ? '<a href="#/admin" class="px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-100">Admin</a>' : ''}
+            <div class="relative inline-block text-left group">
+                <button class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none">
+                    <i class="fas fa-user-circle mr-1"></i> ${user.name}
+                </button>
+                <!-- Dropdown wrapper with padding-top to bridge the gap -->
+                <div class="absolute right-0 w-48 pt-2 hidden group-hover:block z-50">
+                    <div class="bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 border border-gray-100 dark:border-gray-700">
+                        <a href="#/profile/${user.userId}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">My Profile</a>
+                        <a href="#/my-profile" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">My Listings</a>
+                        <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Logout</a>
+                    </div>
+                </div>
+            </div>
+            ${toggleBtn}
         `;
     } else {
-        links = `
-            <a href="#/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Home</a>
-            <a href="#/login" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-200">Login</a>
-            <a href="#/register" class="bg-indigo-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-indigo-700">Register</a>
+        // Guest
+        linksHtml = `
+            <a href="#/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Home</a>
+            <a href="#/about" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">About</a>
+            <a href="#/login" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Login</a>
+            <a href="#/register" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 ml-2">Register</a>
+            ${toggleBtn}
         `;
     }
-    navLinks.innerHTML = links;
-    mobileMenu.innerHTML = `<div class="px-2 pt-2 pb-3 space-y-1">${links.replace(/class="/g, 'class="block ')}</div>`;
+    navLinks.innerHTML = linksHtml;
+    mobileMenu.innerHTML = `<div class="px-2 pt-2 pb-3 space-y-1 block md:hidden bg-white dark:bg-gray-800">${linksHtml.replace(/class="/g, 'class="block ')}</div>`;
 
     document.getElementById('logout-btn')?.addEventListener('click', (e) => {
         e.preventDefault();
@@ -49,6 +104,8 @@ function updateNav() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    initDarkMode(); // Initialize theme preference
+
     mobileMenuButton.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
     });

@@ -7,7 +7,9 @@ const categoryRoutes = require('./category');
 const userRoutes = require('./user');
 const wishlistRoutes = require('./wishlist');
 const commentRoutes = require('./comment');
+const commentRoutes = require('./comment');
 const adminRoutes = require('./admin');
+const orderRoutes = require('./order');
 const { verifyToken } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
@@ -37,5 +39,8 @@ router.put('/products/:id', verifyToken, upload.single('image'), productControll
 
 // --- Admin Routes ---
 router.use('/admin', adminRoutes);
+
+// --- Order Routes ---
+router.use('/orders', orderRoutes);
 
 module.exports = router;

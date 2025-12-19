@@ -10,32 +10,46 @@ async function fixSchema() {
         database: process.env.DB_DATABASE
     });
 
-    const columns = [
-        // Users table checks (already ran, but keeping for completeness if re-run)
-        { name: 'role', sql: "ALTER TABLE users ADD COLUMN role VARCHAR(50) NOT NULL DEFAULT 'user'" },
-        { name: 'phone', sql: "ALTER TABLE users ADD COLUMN phone VARCHAR(20) NOT NULL" },
-        { name: 'dept', sql: "ALTER TABLE users ADD COLUMN dept VARCHAR(100) NOT NULL" },
-        { name: 'student_id', sql: "ALTER TABLE users ADD COLUMN student_id VARCHAR(100) NOT NULL UNIQUE" },
-
-        // Products table checks
-        { name: 'title', sql: "ALTER TABLE products ADD COLUMN title VARCHAR(255) NOT NULL" },
-        { name: 'description', sql: "ALTER TABLE products ADD COLUMN description TEXT NOT NULL" },
-        { name: 'price', sql: "ALTER TABLE products ADD COLUMN price DECIMAL(10, 2) NOT NULL" },
-        { name: 'image_url', sql: "ALTER TABLE products ADD COLUMN image_url VARCHAR(2083) NOT NULL" },
-        { name: 'status', sql: "ALTER TABLE products ADD COLUMN status VARCHAR(50) NOT NULL DEFAULT 'available'" }
+    // Check/Add columns to users table
+    const userColumns = [
+        "role VARCHAR(20) DEFAULT 'user'",
+        "phone VARCHAR(20)",
+        "dept VARCHAR(50)",
+        "student_id VARCHAR(20)",
+        "bio TEXT",                  // NEW
+        "avatar_url VARCHAR(255)",   // NEW
+        "social_links TEXT"          // NEW (JSON string)
     ];
 
-    for (const col of columns) {
+    for (const col of userColumns) {
         try {
-            console.log(`Adding ${col.name}...`);
-            await connection.execute(col.sql);
-            console.log(`✅  ${col.name} added.`);
-        } catch (error) {
-            if (error.code === 'ER_DUP_FIELDNAME') {
-                console.log(`⚠️  ${col.name} already exists.`);
-            } else {
-                console.error(`❌  Failed to add ${col.name}:`, error.message);
-            }
+            console.log(`Adding user ${col.split(' ')[0]}...`);
+            await connection.execute(`ALTER TABLE users ADD COLUMN ${col}`);
+            console.log(`✅  User column added.`);
+        } catch (err) {
+            // Ignore duplicate column errors
+        }
+    }
+
+    // Check/Add columns to products table
+    const productColumns = [
+        "title VARCHAR(255)",
+        "description TEXT",
+        "price DECIMAL(10, 2)",
+        "image_url VARCHAR(255)",
+        "status VARCHAR(20) DEFAULT 'available'",
+        "latitude DECIMAL(10, 8)",
+        "longitude DECIMAL(11, 8)",
+        "location_name VARCHAR(255)",
+        "tags TEXT"                  // NEW
+    ];
+    for (const col of productColumns) {
+        try {
+            console.log(`Adding product ${col.split(' ')[0]}...`);
+            await connection.execute(`ALTER TABLE products ADD COLUMN ${col}`);
+            console.log(`✅  Product column added.`);
+        } catch (err) {
+            // Ignore duplicate column errors
         }
     }
 
@@ -96,6 +110,32 @@ async function fixSchema() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
     console.log('✅  Checked/Created comments table.');
+
+    // Create orders table
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS orders (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        total_amount DECIMAL(10, 2) NOT NULL,
+        status VARCHAR(20) DEFAULT 'confirmed',
+        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+    console.log('✅  Checked/Created orders table.');
+
+    // Create order_items table
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS order_items (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        order_id INT NOT NULL,
+        product_id INT NOT NULL,
+        price DECIMAL(10, 2) NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+    console.log('✅  Checked/Created order_items table.');
 
     await connection.end();
 }

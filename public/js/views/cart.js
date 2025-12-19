@@ -18,16 +18,25 @@ const initCart = () => {
 
     if (cart.length > 0) {
         cartItemsContainer.innerHTML = cart.map(item => `
-            <div class="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex items-center justify-between transition-colors duration-200">
                 <div>
-                    <h3 class="font-bold text-lg">${item.title}</h3>
-                    <p class="text-gray-600">$${item.price}</p>
-                    <p class="text-sm text-gray-500">Sold by: ${item.sellerName}</p>
-                    <p class="text-sm text-gray-500">Contact: ${item.sellerPhone}</p>
+                    <h3 class="font-bold text-lg dark:text-white">${item.title}</h3>
+                    <p class="text-gray-600 dark:text-gray-300">$${item.price}</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">Sold by: ${item.sellerName}</p>
                 </div>
                 <button data-id="${item.id}" class="remove-from-cart-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Remove</button>
             </div>
         `).join('');
+
+        // Checkout Button Container
+        const checkoutBtnContainer = document.createElement('div');
+        checkoutBtnContainer.className = 'mt-8 text-center';
+        checkoutBtnContainer.innerHTML = `
+            <a href="#/checkout" class="inline-block bg-indigo-600 text-white px-8 py-3 rounded-lg hover:bg-indigo-700 font-bold text-lg shadow-md">
+                Proceed to Checkout <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        `;
+        cartItemsContainer.appendChild(checkoutBtnContainer);
 
         cartItemsContainer.querySelectorAll('.remove-from-cart-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -39,7 +48,7 @@ const initCart = () => {
         });
 
     } else {
-        cartItemsContainer.innerHTML = '<p class="text-center">Your cart is empty.</p>';
+        cartItemsContainer.innerHTML = '<p class="text-center dark:text-white">Your cart is empty.</p>';
     }
 };
 

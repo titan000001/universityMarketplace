@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const productController = require('../controllers/productController');
+const orderController = require('../controllers/orderController');
 const categoryRoutes = require('./category');
 const userRoutes = require('./user');
 const wishlistRoutes = require('./wishlist');
@@ -34,6 +35,9 @@ router.post('/products', verifyToken, upload.single('image'), productController.
 router.get('/my-products', verifyToken, productController.getMyProducts);
 router.delete('/products/:id', verifyToken, productController.deleteProduct);
 router.put('/products/:id', verifyToken, upload.single('image'), productController.updateProduct);
+
+// --- Order Routes ---
+router.post('/orders', verifyToken, orderController.createOrder);
 
 // --- Admin Routes ---
 router.use('/admin', adminRoutes);

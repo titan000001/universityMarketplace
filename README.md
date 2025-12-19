@@ -1,129 +1,125 @@
-# University Student Marketplace
+# 🎓 University Student Marketplace
 
-A full-stack web application that provides a marketplace for university students to buy and sell used goods. This project is built with a modular and scalable architecture, making it a great foundation for a real-world application.
+**A modern, feature-rich platform for students to buy, sell, and connect safely.**
 
-## Features
+![Project Banner](https://via.placeholder.com/1200x400?text=University+Marketplace+Hero+Image)
+*(Note: Replace with actual screenshot)*
 
--   **User Authentication:** Secure user registration and login with JWT-based authentication.
--   **Product Listings:** Users can create, edit, and delete their own product listings.
--   **Image Uploads:** A file upload system for product images.
--   **Admin Role:** An admin role with a dashboard to manage users.
--   **Search and Filtering:** A search bar to find products by title and a filter to browse by category.
--   **User Profiles:** Public user profiles to display all items a user is selling.
--   **Modular Backend:** The backend is structured with controllers, routes, and middleware for easy maintenance and scalability.
--   **Modular Frontend:** The frontend is organized into views, services, and a router, making it easy to add new features.
+## 🚀 About The Project
+The **University Student Marketplace** is a full-stack web application designed to create a trusted economy within university campuses. Unlike generic marketplaces, this platform focuses on the specific needs of students: finding textbooks, dorm furniture, and electronics quickly, safely, and locally.
 
-## Tech Stack
-
--   **Frontend:** Vanilla JavaScript (ESM), Tailwind CSS
---   **Backend:** Node.js, Express.js
--   **Database:** MySQL
--   **Authentication:** JSON Web Tokens (JWT)
--   **Image Uploads:** Multer
+built with scalability and performance in mind, using a modular architecture that separates concerns for easier maintenance and future expansion.
 
 ---
 
-## Prerequisites
+## ✨ Key Features
 
-Before you begin, ensure you have the following installed on your system:
+### 🛒 Marketplace & Commerce
+- **Smart Search & Filters**: Find exactly what you need with category filters and real-time search.
+- **Price Analytics**: **"Great Deal"** badges and **"Fair Market Value"** indicators help users make informed decisions based on real-time data.
+- **Checkout System**: A complete "Reserve & Meet" flow where orders track transaction history and automatically mark items as sold.
+- **Product Tags**: Hash-tagged keywords (e.g., `#Calculus`, `#Dorm`) for better item discovery.
 
--   [Node.js](https://nodejs.org/en/download/) (LTS version recommended)
--   [MySQL](https://dev.mysql.com/downloads/mysql/)
+### 👤 Identity & Social
+- **Customizable Profiles**: Users can upload avatars, write bios, and link their social media (LinkedIn, GitHub).
+- **Real-Time Chat**: **Socket.io** integration allows instant, private communication between buyers and sellers without leaving the app.
+- **User Dashboard**: Manage your listings, view order history, and edit your profile.
+
+### 📍 Location & Safety
+- **Campus Map Integration**: Sellers can pin specific meetup spots (e.g., "Main Library") on an interactive **Leaflet.js** map.
+- **Visual Meetup Points**: Buyers see exactly where to meet on the product detail page.
+
+### 🎨 User Experience
+- **Dark Mode**: Fully supported dark/light theme switching for late-night study sessions.
+- **Responsive Design**: Optimized for mobile, tablet, and desktop.
+- **Wishlist & Cart**: Save items for later or add multiple items to your cart for a bulk checkout.
 
 ---
 
-## Installation and Setup
+## 🛠 Tech Stack
 
-Follow these steps to get the project running on your local machine.
+**Frontend**
+- **Vanilla JavaScript (ESM)**: Lightweight, fast, and modular.
+- **Tailwind CSS**: Modern utility-first styling for beautiful, responsive UI.
+- **Leaflet.js**: Open-source interactive maps.
+- **Socket.io Client**: Real-time bidirectional communication.
+
+**Backend**
+- **Node.js & Express**: Robust and scalable server-side environment.
+- **MySQL**: Relational database for structured data integrity.
+- **Socket.io**: WebSocket server for chat functionality.
+- **JWT (JSON Web Tokens)**: Stateless, secure authentication.
+- **Multer**: Efficient file handling for image uploads.
+- **Bcrypt.js**: Security-first password hashing.
+
+---
+
+## ⚙️ Installation & Setup
+
+### Prerequisites
+- [Node.js](https://nodejs.org/en/download/) (v16+ recommended)
+- [MySQL Server](https://dev.mysql.com/downloads/mysql/)
 
 ### 1. Clone the Repository
-
-```sh
-git clone <your-repository-url>
-cd <repository-folder>
+```bash
+git clone https://github.com/yourusername/university-marketplace.git
+cd university-marketplace
 ```
 
 ### 2. Install Dependencies
-
-Install the required npm packages for the backend:
-
-```sh
+```bash
 npm install
 ```
 
-### 3. Set Up the Database
+### 3. Database Setup
+1. Create a MySQL database named `marketplace`.
+2. Run the provided schema script to create tables and seed initial data:
+   ```bash
+   node fix_schema.js
+   ```
+   *(This script automatically checks for missing tables and columns and updates them.)*
 
-1.  **Start MySQL:** Ensure your MySQL server is running.
-2.  **Create the Database:** Open your MySQL client and run the following command:
-    ```sql
-    CREATE DATABASE marketplace;
-    ```
-3.  **Import the Schema and Data:** Use the provided `database.sql` file to create the tables and insert the sample admin user and categories.
-    ```sql
-    -- In your MySQL client, while connected to the 'marketplace' database:
-    SOURCE /path/to/your/project/database.sql;
-    ```
+### 4. Environment Variables
+Create a `.env` file in the root directory:
+```env
+# Server
+PORT=3000
 
-### 4. Configure Environment Variables
+# Database
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=yourpassword
+DB_DATABASE=marketplace
 
-1.  **Create a `.env` file:** In the root of the project, create a new file named `.env`.
-2.  **Add Configuration:** Copy the contents of `.env.example` (or the block below) into your new `.env` file and update the values to match your local setup.
+# Security
+JWT_SECRET=your_super_secret_key
+```
 
-    ```env
-    # .env
-
-    # --- Server Configuration ---
-    PORT=3000
-
-    # --- JWT Configuration ---
-    JWT_SECRET='your_super_secret_jwt_key_change_this'
-
-    # --- MySQL Database Configuration ---
-    DB_HOST='localhost'
-    DB_USER='root'
-    DB_PASSWORD='your_mysql_password'
-    DB_DATABASE='marketplace'
-    ```
+### 5. Run the Application
+```bash
+npm start
+```
+Visit `http://localhost:3000` in your browser.
 
 ---
 
-## Running the Application
+## 🤝 Contributing
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-1.  **Start the Backend Server:**
-    ```sh
-    npm start
-    ```
-    You should see a confirmation that the server is running on `http://localhost:3000`.
-
-2.  **Access the Frontend:**
-    Open your web browser and navigate to [http://localhost:3000](http://localhost:3000).
-
-The application should now be fully functional. You can log in with the default admin credentials:
--   **Student ID:** `admin`
--   **Password:** `adminpass`
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
-## Project Structure
+## 📝 License
+Distributed under the ISC License.
 
-```
-.
-├── config/                # Database configuration
-├── controllers/           # Backend route logic
-├── middleware/            # Custom Express middleware
-├── public/                # Frontend files
-│   ├── js/
-│   │   ├── services/      # API service
-│   │   ├── views/         # Frontend view templates and logic
-│   │   ├── app.js         # Main frontend entry point
-│   │   └── router.js      # Frontend router
-│   └── index.html         # Main HTML file
-├── routes/                # API routes
-├── uploads/               # Directory for user-uploaded images
-├── validators/            # Joi validation schemas
-├── .env                   # Environment variables (ignored by git)
-├── .gitignore             # Git ignore file
-├── database.sql           # MySQL database schema and sample data
-├── package.json           # Project metadata and dependencies
-└── server.js              # Main backend Express server file
-```
+---
+
+## 📞 Contact
+Project Maintainer - [Your Name]
+
+Project Link: [https://github.com/yourusername/university-marketplace](https://github.com/yourusername/university-marketplace)

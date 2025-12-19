@@ -2,9 +2,25 @@
 import { apiRequest } from '../services/api.js';
 
 const homeView = () => `
-    <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-800 dark:text-gray-100">Marketplace</h1>
-        <p class="text-lg text-gray-600 dark:text-gray-400">Buy and sell items from fellow students.</p>
+    <div class="relative bg-gray-900 text-white rounded-2xl overflow-hidden mb-12 shadow-2xl h-[400px] group">
+        <img src="/images/hero-banner.jpg" alt="University Campus" class="absolute inset-0 w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105">
+        <div class="relative z-10 p-8 md:p-16 h-full flex flex-col justify-center items-start text-left bg-gradient-to-r from-indigo-900/90 via-indigo-900/40 to-transparent">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 text-white drop-shadow-xl tracking-tight leading-tight">
+                UniMarket
+                <span class="block text-2xl md:text-3xl font-medium mt-3 text-indigo-200">Your Campus. Your Economy.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-100 max-w-lg mb-8 drop-shadow-md font-light leading-relaxed">
+                The trusted platform to find cheap textbooks, sell old gear, and connect safely with students at your university.
+            </p>
+            <div class="flex gap-4">
+                <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="px-8 py-3 bg-white text-indigo-700 font-bold rounded-full shadow-lg hover:bg-gray-100 hover:shadow-xl transition-all transform hover:-translate-y-1">
+                    Browse Items
+                </button>
+                <a href="#/sell" class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-full shadow-lg hover:bg-indigo-500 hover:shadow-xl transition-all transform hover:-translate-y-1 border border-indigo-400 backdrop-blur-sm bg-opacity-90">
+                    Start Selling
+                </a>
+            </div>
+        </div>
     </div>
     <div class="mb-8 flex justify-center gap-4">
         <input type="search" id="search-bar" placeholder="Search for items..." class="w-full md:w-1/2 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
@@ -50,7 +66,12 @@ const initHome = async () => {
                 </a>
             `).join('');
         } else {
-            productGrid.innerHTML = '<p class="text-center col-span-full dark:text-gray-400">No items match your search.</p>';
+            productGrid.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <img src="/images/empty-state.png" alt="No items found" class="mx-auto w-48 mb-4 opacity-75">
+                    <p class="text-xl text-gray-500 dark:text-gray-400">Oops! No items match your search.</p>
+                </div>
+            `;
         }
     };
 

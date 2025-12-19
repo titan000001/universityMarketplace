@@ -28,13 +28,13 @@ const chatView = () => `
 `;
 
 const initChat = async (param) => {
-    // Param format: productId/sellerId  (e.g., "1/5")
-    // Note: Our simple router might pass "1/5" as a single string if we define route as /chat/:params
+    // Param format: productId-sellerId  (e.g., "1-5")
+    // Note: Our simple router might pass "1-5" as a single string if we define route as /chat/:params
     // Let's assume the router passes the full string after /chat/
 
     // Parse params manually if needed, or assume router handles /:p1/:p2
-    // For this simple router, let's parse the param string "productId/sellerId"
-    const [productId, sellerId] = param.split('/');
+    // For this simple router, let's parse the param string "productId-sellerId"
+    const [productId, sellerId] = param.split('-');
 
     const currentUser = JSON.parse(atob(localStorage.getItem('token').split('.')[1]));
     const buyerId = currentUser.userId;

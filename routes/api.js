@@ -7,7 +7,6 @@ const categoryRoutes = require('./category');
 const userRoutes = require('./user');
 const wishlistRoutes = require('./wishlist');
 const commentRoutes = require('./comment');
-const commentRoutes = require('./comment');
 const adminRoutes = require('./admin');
 const orderRoutes = require('./order');
 const { verifyToken } = require('../middleware/authMiddleware');

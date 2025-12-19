@@ -99,7 +99,7 @@ const initProductDetail = async (param) => {
                         </button>
                     </div>
                     
-                    <a href="#/chat/${product.id}/${product.sellerId}" class="block w-full py-2 mb-4 bg-indigo-600 text-white text-center rounded-lg hover:bg-indigo-700 transition-colors">
+                    <a href="#/chat/${product.id}-${product.sellerId}" class="block w-full py-2 mb-4 bg-indigo-600 text-white text-center rounded-lg hover:bg-indigo-700 transition-colors">
                         <i class="fas fa-comments mr-2"></i> Message Seller
                     </a>
 

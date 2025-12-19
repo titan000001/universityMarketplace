@@ -2,8 +2,14 @@
 
 **A modern, feature-rich platform for students to buy, sell, and connect safely.**
 
-![Project Banner](https://via.placeholder.com/1200x400?text=University+Marketplace+Hero+Image)
-*(Note: Replace with actual screenshot)*
+# 🎓 University Student Marketplace
+
+**A modern, feature-rich platform for students to buy, sell, and connect safely.**
+
+![Project Banner](public/images/hero-banner.jpg)
+
+### 📢 Promotional Poster
+![Poster](public/images/poster.png)
 
 ## 🚀 About The Project
 The **University Student Marketplace** is a full-stack web application designed to create a trusted economy within university campuses. Unlike generic marketplaces, this platform focuses on the specific needs of students: finding textbooks, dorm furniture, and electronics quickly, safely, and locally.

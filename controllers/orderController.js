@@ -2,26 +2,37 @@
 const db = require('../config/database');
 
 const createOrder = async (req, res) => {
-    const { productIds } = req.body;
-    const buyerId = req.user.userId;
-
-    if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
-        return res.status(400).json({ message: 'No items to checkout.' });
-    }
-
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
 
-        for (const productId of productIds) {
-            // Check if product exists and is available
+        const userId = req.user.userId;
+        const { items } = req.body; // Expecting array of { id, price }
+
+        if (!items || items.length === 0) {
+            return res.status(400).json({ message: 'No items in order.' });
+        }
+
+        // Calculate total
+        const totalAmount = items.reduce((sum, item) => sum + parseFloat(item.price), 0);
+
+        // Create Order
+        const [orderResult] = await connection.query(
+            'INSERT INTO orders (user_id, total_amount) VALUES (?, ?)',
+            [userId, totalAmount]
+        );
+        const orderId = orderResult.insertId;
+
+        // Create Order Items and Update Product Status
+        for (const item of items) {
+            // Check if available
             const [rows] = await connection.query(
-                'SELECT * FROM products WHERE id = ? FOR UPDATE',
-                [productId]
+                'SELECT status, user_id, title FROM products WHERE id = ? FOR UPDATE',
+                [item.id]
             );
 
             if (rows.length === 0) {
-                throw new Error(`Product with ID ${productId} not found.`);
+                throw new Error(`Product ${item.id} not found.`);
             }
 
             const product = rows[0];
@@ -29,38 +40,32 @@ const createOrder = async (req, res) => {
                 throw new Error(`Product "${product.title}" is no longer available.`);
             }
 
-            if (product.user_id === buyerId) {
+            if (product.user_id === userId) {
                 throw new Error(`You cannot buy your own product: "${product.title}".`);
             }
 
-            // Create Order
+            // Insert Item
             await connection.query(
-                'INSERT INTO orders (buyer_id, product_id) VALUES (?, ?)',
-                [buyerId, productId]
+                'INSERT INTO order_items (order_id, product_id, price) VALUES (?, ?, ?)',
+                [orderId, item.id, item.price]
             );
 
-            // Update Product Status
+            // Mark Product as Sold
             await connection.query(
-                'UPDATE products SET status = ? WHERE id = ?',
-                ['sold', productId]
+                'UPDATE products SET status = "sold" WHERE id = ?',
+                [item.id]
             );
         }
 
         await connection.commit();
-        res.status(201).json({ message: 'Order placed successfully!' });
+        res.status(201).json({ message: 'Order placed successfully!', orderId });
     } catch (error) {
         await connection.rollback();
-        console.error('Checkout Error:', error);
-        if (error.message.includes('Product') || error.message.includes('available') || error.message.includes('own product')) {
-            res.status(400).json({ message: error.message });
-        } else {
-            res.status(500).json({ message: 'Server error processing order.' });
-        }
+        console.error('Create Order Error:', error);
+        res.status(400).json({ message: error.message || 'Server error creating order.' });
     } finally {
         connection.release();
     }
 };
 
-module.exports = {
-    createOrder,
-};
+module.exports = { createOrder };

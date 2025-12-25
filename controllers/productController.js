@@ -47,7 +47,7 @@ const getProductById = async (req, res) => {
     try {
         const { id } = req.params;
         const [products] = await db.query(
-            `SELECT p.id, p.title, p.description, p.price, p.image_url, u.id AS sellerId, u.name AS sellerName, u.phone AS sellerPhone, u.dept AS sellerDept, GROUP_CONCAT(c.name) AS categories
+            `SELECT p.id, p.title, p.description, p.price, p.image_url, p.tags, u.id AS sellerId, u.name AS sellerName, u.phone AS sellerPhone, u.dept AS sellerDept, GROUP_CONCAT(c.name) AS categories
              FROM products p
              JOIN users u ON p.user_id = u.id
              LEFT JOIN product_categories pc ON p.id = pc.product_id
@@ -57,11 +57,35 @@ const getProductById = async (req, res) => {
             [id]
         );
 
-        const product = products[0];
-        if (!product) {
+        if (products.length === 0) {
             return res.status(404).json({ message: 'Product not found.' });
         }
-        res.json(product);
+
+        const product = products[0];
+
+        // Analytics: Calculate average price for this category
+        let averagePrice = null;
+        let productCount = 0;
+
+        if (product.categories) {
+            // Get the first category (primary for comparison)
+            const firstCategory = product.categories.split(',')[0];
+
+            const [stats] = await db.query(`
+                SELECT AVG(p.price) as avgPrice, COUNT(p.id) as count
+                FROM products p
+                JOIN product_categories pc ON p.id = pc.product_id
+                JOIN categories c ON pc.category_id = c.id
+                WHERE c.name = ? AND p.status = 'available'
+            `, [firstCategory]);
+
+            if (stats.length > 0) {
+                averagePrice = parseFloat(stats[0].avgPrice);
+                productCount = stats[0].count;
+            }
+        }
+
+        res.json({ ...product, averagePrice, categoryProductCount: productCount });
     } catch (error) {
         console.error('Get Product Detail Error:', error);
         res.status(500).json({ message: 'Server error fetching product details.' });
@@ -73,17 +97,17 @@ const createProduct = async (req, res) => {
     try {
         await connection.beginTransaction();
 
-        const { title, description, price, categories } = req.body;
-        const imageUrl = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
+        const { title, description, price, categories, location_name, latitude, longitude, tags } = req.body;
+        const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
         const userId = req.user.userId;
 
-        if (!title || !description || !price || !imageUrl) {
-            return res.status(400).json({ message: 'All product fields are required.' });
+        if (!title || !description || !price) {
+            return res.status(400).json({ message: 'Title, description, and price are required.' });
         }
 
         const [result] = await connection.query(
-            'INSERT INTO products (user_id, title, description, price, image_url) VALUES (?, ?, ?, ?, ?)',
-            [userId, title, description, price, imageUrl]
+            'INSERT INTO products (title, description, price, image_url, user_id, latitude, longitude, location_name, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [title, description, price, imageUrl, userId, latitude || null, longitude || null, location_name || '', tags || '']
         );
         const productId = result.insertId;
 
@@ -141,7 +165,7 @@ const updateProduct = async (req, res) => {
     try {
         await connection.beginTransaction();
         const { id } = req.params;
-        const { title, description, price, categories } = req.body;
+        const { title, description, price, categories, tags } = req.body;
         const imageUrl = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
         const userId = req.user.userId;
 
@@ -150,8 +174,8 @@ const updateProduct = async (req, res) => {
         }
 
         const [result] = await connection.query(
-            'UPDATE products SET title = ?, description = ?, price = ?, image_url = ? WHERE id = ? AND user_id = ?',
-            [title, description, price, imageUrl, id, userId]
+            'UPDATE products SET title = ?, description = ?, price = ?, image_url = ?, tags = ? WHERE id = ? AND user_id = ?',
+            [title, description, price, imageUrl, tags || '', id, userId]
         );
 
         if (result.affectedRows === 0) {

@@ -3,12 +3,12 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const productController = require('../controllers/productController');
-const orderController = require('../controllers/orderController');
 const categoryRoutes = require('./category');
 const userRoutes = require('./user');
 const wishlistRoutes = require('./wishlist');
 const commentRoutes = require('./comment');
 const adminRoutes = require('./admin');
+const orderRoutes = require('./order');
 const { verifyToken } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
@@ -36,10 +36,10 @@ router.get('/my-products', verifyToken, productController.getMyProducts);
 router.delete('/products/:id', verifyToken, productController.deleteProduct);
 router.put('/products/:id', verifyToken, upload.single('image'), productController.updateProduct);
 
-// --- Order Routes ---
-router.post('/orders', verifyToken, orderController.createOrder);
-
 // --- Admin Routes ---
 router.use('/admin', adminRoutes);
+
+// --- Order Routes ---
+router.use('/orders', orderRoutes);
 
 module.exports = router;

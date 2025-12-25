@@ -72,6 +72,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('join_notifications', (userId) => {
+
         if (userId) {
             socket.join(`user_${userId}`);
             console.log(`User ${userId} joined notification channel`);
@@ -96,6 +97,10 @@ app.get('*', (req, res) => {
 });
 
 // --- 7. Start Server ---
-server.listen(PORT, () => { // Listen with the http server, not the express app
-    console.log(`✅  Server is running on http://localhost:${PORT}`);
-});
+if (require.main === module) {
+    server.listen(PORT, () => {
+        console.log(`✅  Server is running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;

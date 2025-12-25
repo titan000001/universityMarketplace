@@ -21,7 +21,7 @@ const createOrder = async (req, res) => {
         for (const item of items) {
             // Check if available and fetch price
             const [rows] = await connection.query(
-                'SELECT price, status FROM products WHERE id = ? FOR UPDATE',
+                'SELECT price, status, user_id, title FROM products WHERE id = ? FOR UPDATE',
                 [item.id]
             );
 
@@ -29,7 +29,10 @@ const createOrder = async (req, res) => {
                 throw new Error(`Product ${item.id} not found.`);
             }
             if (rows[0].status !== 'available') {
-                throw new Error(`Product ${item.id} is no longer available.`);
+                throw new Error(`Product "${rows[0].title}" is no longer available.`);
+            }
+            if (rows[0].user_id === userId) {
+                throw new Error(`You cannot buy your own product: "${rows[0].title}".`);
             }
 
             const price = parseFloat(rows[0].price);

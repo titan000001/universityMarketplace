@@ -53,5 +53,4 @@ router.use('/notifications', notificationRoutes);
 
 // --- Review Routes ---
 router.use('/reviews', reviewRoutes);
-
 module.exports = router;

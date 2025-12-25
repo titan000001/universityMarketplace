@@ -1,0 +1,111 @@
+
+> university-student-marketplace@1.0.0 test
+> jest
+
+PASS tests/product.test.js
+FAIL tests/order.test.js
+  ΓùÅ Console
+
+    console.error
+      Create Order Error: TypeError: Cannot read properties of undefined (reading 'status')
+          at status (C:\Users\tawhi\Documents\Codes\universityMarketplace\controllers\orderController.js:31:25)
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+      67 |     } catch (error) {
+      68 |         await connection.rollback();
+    > 69 |         console.error('Create Order Error:', error);
+         |                 ^
+      70 |         res.status(400).json({ message: error.message || 'Server error creating order.' });
+      71 |     } finally {
+      72 |         connection.release();
+
+      at error (controllers/orderController.js:69:17)
+
+    console.error
+      Create Order Error: TypeError: Cannot read properties of undefined (reading 'status')
+          at status (C:\Users\tawhi\Documents\Codes\universityMarketplace\controllers\orderController.js:31:25)
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+      67 |     } catch (error) {
+      68 |         await connection.rollback();
+    > 69 |         console.error('Create Order Error:', error);
+         |                 ^
+      70 |         res.status(400).json({ message: error.message || 'Server error creating order.' });
+      71 |     } finally {
+      72 |         connection.release();
+
+      at error (controllers/orderController.js:69:17)
+
+    console.error
+      Create Order Error: TypeError: Cannot read properties of undefined (reading 'status')
+          at status (C:\Users\tawhi\Documents\Codes\universityMarketplace\controllers\orderController.js:31:25)
+          at processTicksAndRejections (node:internal/process/task_queues:103:5)
+
+      67 |     } catch (error) {
+      68 |         await connection.rollback();
+    > 69 |         console.error('Create Order Error:', error);
+         |                 ^
+      70 |         res.status(400).json({ message: error.message || 'Server error creating order.' });
+      71 |     } finally {
+      72 |         connection.release();
+
+      at error (controllers/orderController.js:69:17)
+
+  ΓùÅ Order Endpoints ΓÇ║ POST /api/orders ΓÇ║ should process a valid order successfully
+
+    expect(received).toEqual(expected) // deep equality
+
+    Expected: 201
+    Received: 400
+
+      70 |                 .send(orderData);
+      71 |
+    > 72 |             expect(res.statusCode).toEqual(201);
+         |                                    ^
+      73 |             expect(res.body).toHaveProperty('message', 'Order placed successfully!');
+      74 |             expect(res.body).toHaveProperty('orderId', 500);
+      75 |             expect(mockConnection.commit).toHaveBeenCalled();
+
+      at Object.toEqual (tests/order.test.js:72:36)
+
+  ΓùÅ Order Endpoints ΓÇ║ POST /api/orders ΓÇ║ should fail if product is not available
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "no longer available"
+    Received string:    "Cannot read properties of undefined (reading 'status')"
+
+       99 |
+      100 |             expect(res.statusCode).toEqual(400);
+    > 101 |             expect(res.body.message).toContain('no longer available');
+          |                                      ^
+      102 |             expect(mockConnection.rollback).toHaveBeenCalled();
+      103 |         });
+      104 |
+
+      at Object.toContain (tests/order.test.js:101:38)
+
+  ΓùÅ Order Endpoints ΓÇ║ POST /api/orders ΓÇ║ should fail if trying to buy own product
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected substring: "cannot buy your own product"
+    Received string:    "Cannot read properties of undefined (reading 'status')"
+
+      125 |
+      126 |             expect(res.statusCode).toEqual(400);
+    > 127 |             expect(res.body.message).toContain('cannot buy your own product');
+          |                                      ^
+      128 |             expect(mockConnection.rollback).toHaveBeenCalled();
+      129 |         });
+      130 |     });
+
+      at Object.toContain (tests/order.test.js:127:38)
+
+PASS tests/auth.test.js
+
+Test Suites: 1 failed, 2 passed, 3 total
+Tests:       3 failed, 4 passed, 7 total
+Snapshots:   0 total
+Time:        1.645 s
+Ran all test suites.

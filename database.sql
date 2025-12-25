@@ -17,17 +17,32 @@ CREATE TABLE IF NOT EXISTS `users` (
   `role` VARCHAR(50) NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Shops table for student businesses
+CREATE TABLE IF NOT EXISTS `shops` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `bio` TEXT,
+  `logo_url` VARCHAR(255),
+  `banner_url` VARCHAR(255),
+  `status` VARCHAR(20) DEFAULT 'active',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Products table to store items for sale
 CREATE TABLE IF NOT EXISTS `products` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `user_id` INT NOT NULL,
+  `shop_id` INT DEFAULT NULL,
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT NOT NULL,
   `price` DECIMAL(10, 2) NOT NULL,
   `image_url` VARCHAR(2083) NOT NULL,
   `status` VARCHAR(50) NOT NULL DEFAULT 'available',
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`shop_id`) REFERENCES `shops`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Categories table for products

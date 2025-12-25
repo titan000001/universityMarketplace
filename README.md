@@ -13,6 +13,7 @@ The **University Student Marketplace** is a secure, campus-focused economy. Unli
 - **Smart Search**: Filter by category, price, or tags (e.g., `#Textbook`).
 - **Price Analytics**: Automatically flags "Great Deals" based on market average.
 - **Secure Checkout**: "Reserve & Meet" system ensures items aren't sold twice.
+- **Student Shops**: Launch your own micro-storefront with custom branding (Logo, Banner, Bio).
 
 ### 💬 Social & Identity
 - **Real-Time Chat**: Negotiate safely with built-in instant messaging (Socket.io).
@@ -30,7 +31,7 @@ The **University Student Marketplace** is a secure, campus-focused economy. Unli
 - **Frontend**: Vanilla JS (ESM), Tailwind CSS, Leaflet.js, Animate.css
 - **Backend**: Node.js, Express, Socket.io
 - **Database**: MySQL (Transactional Order System)
-- **Security**: JWT Auth, BCrypt, Helmet, Rate Limiting
+- **Security**: JWT Auth, BCrypt, Helmet, Rate Limiting, Input Validation (Joi)
 
 ---
 

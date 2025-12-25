@@ -5,7 +5,14 @@ import { navigate } from '../router.js';
 const sellView = () => `
     <div class="max-w-lg mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transition-colors duration-200">
         <h2 class="text-2xl font-bold text-center mb-6 dark:text-white">List a New Item</h2>
-        <form id="sell-form" enctype="multipart/form-data">
+        <form id="sell-form" enctype="multipart/form-data" class="space-y-4">
+            <div id="shop-selection-container" class="hidden animate__animated animate__fadeIn">
+                <label for="shop_id" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Sell via Your Shop?</label>
+                <select id="shop_id" name="shop_id" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="">No, sell as Individual</option>
+                </select>
+                <p class="text-xs text-gray-500 mt-1 italic">Link this item to your business channel for better branding.</p>
+            </div>
             <div class="mb-4">
                 <label for="title" class="block text-gray-700 dark:text-gray-300">Item Title</label>
                 <input type="text" id="title" name="title" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
@@ -62,6 +69,22 @@ const initSell = async () => {
             ${cat.name}
         </label>
     `).join('');
+
+    // Load User Shops
+    try {
+        const shops = await apiRequest('/shops/me');
+        if (shops.length > 0) {
+            const shopSelect = document.getElementById('shop_id');
+            const shopContainer = document.getElementById('shop-selection-container');
+            shopContainer.classList.remove('hidden');
+            shops.forEach(shop => {
+                const opt = document.createElement('option');
+                opt.value = shop.id;
+                opt.textContent = `Yes, via "${shop.name}"`;
+                shopSelect.appendChild(opt);
+            });
+        }
+    } catch (err) { console.error('Error fetching shops:', err); }
 
     document.getElementById('sell-form').addEventListener('submit', async e => {
         e.preventDefault();

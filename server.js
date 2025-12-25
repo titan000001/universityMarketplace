@@ -33,7 +33,7 @@ app.use(helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", "cdn.tailwindcss.com", "unpkg.com", "cdn.socket.io", "cdnjs.cloudflare.com"],
-        imgSrc: ["'self'", "data:", "unpkg.com", "a.tile.openstreetmap.org", "b.tile.openstreetmap.org", "c.tile.openstreetmap.org"],
+        imgSrc: ["'self'", "data:", "unpkg.com", "placehold.co", "a.tile.openstreetmap.org", "b.tile.openstreetmap.org", "c.tile.openstreetmap.org"],
         connectSrc: ["'self'", "ws://localhost:3000", "http://localhost:3000"], // Adjust for production
     },
 }));
@@ -54,10 +54,18 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api', apiRoutes);
 
 // --- 5. Socket.IO Logic ---
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET;
+
 io.on('connection', (socket) => {
+    // Note: In a production environment, you should use socket.io middleware for this:
+    // io.use((socket, next) => { ... verify token ... })
+
     console.log(`User Connected: ${socket.id}`);
 
     socket.on('join_room', (data) => {
+        // SECURITY TODO: Verify if the user has permission to join this room
+        // (e.g., check if they are the buyer or seller for this product/order)
         socket.join(data);
         console.log(`User with ID: ${socket.id} joined room: ${data}`);
     });

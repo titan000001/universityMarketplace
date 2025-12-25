@@ -13,8 +13,29 @@ const createOrder = async (req, res) => {
             return res.status(400).json({ message: 'No items in order.' });
         }
 
-        // Calculate total
-        const totalAmount = items.reduce((sum, item) => sum + parseFloat(item.price), 0);
+        // Initialize order items and total amount
+        const orderItems = [];
+        let totalAmount = 0;
+
+        // Verify items and fetch current prices
+        for (const item of items) {
+            // Check if available and fetch price
+            const [rows] = await connection.query(
+                'SELECT price, status FROM products WHERE id = ? FOR UPDATE',
+                [item.id]
+            );
+
+            if (rows.length === 0) {
+                throw new Error(`Product ${item.id} not found.`);
+            }
+            if (rows[0].status !== 'available') {
+                throw new Error(`Product ${item.id} is no longer available.`);
+            }
+
+            const price = parseFloat(rows[0].price);
+            totalAmount += price;
+            orderItems.push({ id: item.id, price: price });
+        }
 
         // Create Order
         const [orderResult] = await connection.query(
@@ -24,17 +45,7 @@ const createOrder = async (req, res) => {
         const orderId = orderResult.insertId;
 
         // Create Order Items and Update Product Status
-        for (const item of items) {
-            // Check if available
-            const [rows] = await connection.query(
-                'SELECT status FROM products WHERE id = ? FOR UPDATE',
-                [item.id]
-            );
-
-            if (rows.length === 0 || rows[0].status !== 'available') {
-                throw new Error(`Product ${item.id} is no longer available.`);
-            }
-
+        for (const item of orderItems) {
             // Insert Item
             await connection.query(
                 'INSERT INTO order_items (order_id, product_id, price) VALUES (?, ?, ?)',

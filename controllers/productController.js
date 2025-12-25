@@ -1,14 +1,16 @@
 // controllers/productController.js
 const db = require('../config/database');
+const { deleteFile } = require('../utils/fileUtils');
 
 const getAllProducts = async (req, res) => {
     try {
         const { search, category } = req.query;
 
         let query = `
-            SELECT p.id, p.title, p.price, p.image_url, u.id AS sellerId, u.name AS sellerName, GROUP_CONCAT(c.name) AS categories
+            SELECT p.id, p.title, p.price, p.image_url, u.id AS sellerId, u.name AS sellerName, s.name AS shopName, s.id AS shopId, GROUP_CONCAT(c.name) AS categories
             FROM products p
             JOIN users u ON p.user_id = u.id
+            LEFT JOIN shops s ON p.shop_id = s.id
             LEFT JOIN product_categories pc ON p.id = pc.product_id
             LEFT JOIN categories c ON pc.category_id = c.id
         `;
@@ -47,9 +49,10 @@ const getProductById = async (req, res) => {
     try {
         const { id } = req.params;
         const [products] = await db.query(
-            `SELECT p.id, p.title, p.description, p.price, p.image_url, p.tags, u.id AS sellerId, u.name AS sellerName, u.phone AS sellerPhone, u.dept AS sellerDept, GROUP_CONCAT(c.name) AS categories
+            `SELECT p.id, p.title, p.description, p.price, p.image_url, p.tags, p.shop_id, u.id AS sellerId, u.name AS sellerName, u.phone AS sellerPhone, u.dept AS sellerDept, s.name AS shopName, GROUP_CONCAT(c.name) AS categories
              FROM products p
              JOIN users u ON p.user_id = u.id
+             LEFT JOIN shops s ON p.shop_id = s.id
              LEFT JOIN product_categories pc ON p.id = pc.product_id
              LEFT JOIN categories c ON pc.category_id = c.id
              WHERE p.id = ?
@@ -69,7 +72,7 @@ const getProductById = async (req, res) => {
 
         if (product.categories) {
             // Get the first category (primary for comparison)
-            const firstCategory = product.categories.split(',')[0];
+            const firstCategory = product.categories.split(',')[0].trim();
 
             const [stats] = await db.query(`
                 SELECT AVG(p.price) as avgPrice, COUNT(p.id) as count
@@ -79,7 +82,7 @@ const getProductById = async (req, res) => {
                 WHERE c.name = ? AND p.status = 'available'
             `, [firstCategory]);
 
-            if (stats.length > 0) {
+            if (stats.length > 0 && stats[0].avgPrice !== null) {
                 averagePrice = parseFloat(stats[0].avgPrice);
                 productCount = stats[0].count;
             }
@@ -97,7 +100,7 @@ const createProduct = async (req, res) => {
     try {
         await connection.beginTransaction();
 
-        const { title, description, price, categories, location_name, latitude, longitude, tags } = req.body;
+        const { title, description, price, categories, location_name, latitude, longitude, tags, shop_id } = req.body;
         const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
         const userId = req.user.userId;
 
@@ -105,9 +108,35 @@ const createProduct = async (req, res) => {
             return res.status(400).json({ message: 'Title, description, and price are required.' });
         }
 
+        // Basic Coordinate Validation
+        const lat = latitude ? parseFloat(latitude) : null;
+        const lng = longitude ? parseFloat(longitude) : null;
+
+        if (latitude && (isNaN(lat) || lat < -90 || lat > 90)) {
+            return res.status(400).json({ message: 'Invalid latitude.' });
+        }
+        if (longitude && (isNaN(lng) || lng < -180 || lng > 180)) {
+            return res.status(400).json({ message: 'Invalid longitude.' });
+        }
+
+        // Tag Sanitization (limit length and remove extra spaces)
+        let sanitizedTags = '';
+        if (tags) {
+            sanitizedTags = tags.split(',').map(tag => tag.trim()).filter(tag => tag).join(',').substring(0, 255);
+        }
+
+        // Shop Ownership Validation
+        if (shop_id) {
+            const [shops] = await connection.query('SELECT id FROM shops WHERE id = ? AND user_id = ?', [shop_id, userId]);
+            if (shops.length === 0) {
+                await connection.rollback();
+                return res.status(403).json({ message: 'Invalid shop ID or you do not own this shop.' });
+            }
+        }
+
         const [result] = await connection.query(
-            'INSERT INTO products (title, description, price, image_url, user_id, latitude, longitude, location_name, tags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [title, description, price, imageUrl, userId, latitude || null, longitude || null, location_name || '', tags || '']
+            'INSERT INTO products (title, description, price, image_url, user_id, latitude, longitude, location_name, tags, shop_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [title, description, price, imageUrl, userId, lat, lng, location_name || '', sanitizedTags, shop_id || null]
         );
         const productId = result.insertId;
 
@@ -144,13 +173,24 @@ const deleteProduct = async (req, res) => {
         const { id } = req.params;
         const userId = req.user.userId;
 
+        const [products] = await db.query(
+            'SELECT image_url FROM products WHERE id = ? AND user_id = ?',
+            [id, userId]
+        );
+
+        if (products.length === 0) {
+            return res.status(404).json({ message: 'Product not found or you do not have permission to delete it.' });
+        }
+
+        const oldImageUrl = products[0].image_url;
+
         const [result] = await db.query(
             'DELETE FROM products WHERE id = ? AND user_id = ?',
             [id, userId]
         );
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: 'Product not found or you do not have permission to delete it.' });
+        if (result.affectedRows > 0 && oldImageUrl) {
+            await deleteFile(oldImageUrl);
         }
 
         res.json({ message: 'Product deleted successfully.' });
@@ -165,7 +205,7 @@ const updateProduct = async (req, res) => {
     try {
         await connection.beginTransaction();
         const { id } = req.params;
-        const { title, description, price, categories, tags } = req.body;
+        const { title, description, price, categories, tags, shop_id } = req.body;
         const imageUrl = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
         const userId = req.user.userId;
 
@@ -173,13 +213,39 @@ const updateProduct = async (req, res) => {
             return res.status(400).json({ message: 'All product fields are required.' });
         }
 
-        const [result] = await connection.query(
-            'UPDATE products SET title = ?, description = ?, price = ?, image_url = ?, tags = ? WHERE id = ? AND user_id = ?',
-            [title, description, price, imageUrl, tags || '', id, userId]
+        const [existingProducts] = await connection.query(
+            'SELECT image_url FROM products WHERE id = ? AND user_id = ?',
+            [id, userId]
         );
 
-        if (result.affectedRows === 0) {
+        if (existingProducts.length === 0) {
             return res.status(404).json({ message: 'Product not found or you do not have permission to update it.' });
+        }
+
+        const oldImageUrl = existingProducts[0].image_url;
+
+        // Tag Sanitization
+        let sanitizedTags = '';
+        if (tags) {
+            sanitizedTags = tags.split(',').map(tag => tag.trim()).filter(tag => tag).join(',').substring(0, 255);
+        }
+
+        // Shop Ownership Validation
+        if (shop_id) {
+            const [shops] = await connection.query('SELECT id FROM shops WHERE id = ? AND user_id = ?', [shop_id, userId]);
+            if (shops.length === 0) {
+                await connection.rollback();
+                return res.status(403).json({ message: 'Invalid shop ID or you do not own this shop.' });
+            }
+        }
+
+        const [result] = await connection.query(
+            'UPDATE products SET title = ?, description = ?, price = ?, image_url = ?, tags = ?, shop_id = ? WHERE id = ? AND user_id = ?',
+            [title, description, price, imageUrl, sanitizedTags, shop_id || null, id, userId]
+        );
+
+        if (result.affectedRows > 0 && req.file && oldImageUrl && oldImageUrl !== imageUrl) {
+            await deleteFile(oldImageUrl);
         }
 
         await connection.query('DELETE FROM product_categories WHERE product_id = ?', [id]);

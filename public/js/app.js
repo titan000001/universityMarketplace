@@ -32,8 +32,13 @@ function toggleDarkMode() {
     updateNav(); // To update the icon
 }
 
-// Global scope for onclick
-window.toggleDarkMode = toggleDarkMode;
+function isTokenExpired(token) {
+    const payload = parseJwt(token);
+    if (!payload || !payload.exp) return true;
+    return Date.now() >= payload.exp * 1000;
+}
+
+// Removed window.toggleDarkMode as it's blocked by CSP
 
 function parseJwt(token) {
     try {
@@ -48,10 +53,16 @@ async function updateNav() {
     const navLinks = document.getElementById('nav-links');
     const mobileMenu = document.getElementById('mobile-menu');
 
+    if (token && isTokenExpired(token)) {
+        localStorage.removeItem('token');
+        window.location.reload();
+        return;
+    }
+
     // Check Dark Mode
     const isDark = document.documentElement.classList.contains('dark');
     const modeIcon = isDark ? 'fa-sun' : 'fa-moon';
-    const toggleBtn = `<button onclick="toggleDarkMode()" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 ml-2">
+    const toggleBtn = `<button class="theme-toggle px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 ml-2">
         <i class="fas ${modeIcon}"></i>
     </button>`;
 
@@ -67,6 +78,7 @@ async function updateNav() {
             <a href="#/about" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">About</a>
             <a href="#/cart" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Cart <span id="cart-count" class="bg-red-500 text-white rounded-full px-2 text-xs">0</span></a>
             <a href="#/wishlist" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Wishlist <span id="wishlist-count" class="bg-pink-500 text-white rounded-full px-2 text-xs hidden">0</span></a>
+            <a href="#/shops" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/40">Student Shops</a>
             <a href="#/sell" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Sell Item</a>
             ${isAdmin ? '<a href="#/admin" class="px-3 py-2 rounded-md text-sm font-medium text-red-600 hover:bg-red-100">Admin</a>' : ''}
             <div class="relative inline-block text-left group">
@@ -77,6 +89,7 @@ async function updateNav() {
                 <div class="absolute right-0 w-48 pt-2 hidden group-hover:block z-50">
                     <div class="bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 border border-gray-100 dark:border-gray-700">
                         <a href="#/profile/${user.userId}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">My Profile</a>
+                        <a href="#/manage-shop" class="block px-4 py-2 text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700">Manage Your Shop</a>
                         <a href="#/my-profile" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">My Listings</a>
                         <a href="#/contact" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Support</a>
                         <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Logout</a>
@@ -89,6 +102,7 @@ async function updateNav() {
         // Guest
         linksHtml = `
             <a href="#/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Home</a>
+            <a href="#/shops" class="px-3 py-2 rounded-md text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/40">Student Shops</a>
             <a href="#/about" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">About</a>
             <a href="#/login" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700">Login</a>
             <a href="#/register" class="bg-indigo-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-indigo-700 ml-2">Register</a>
@@ -110,6 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     mobileMenuButton.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
+    });
+
+    // Event delegation for theme toggle (bypasses CSP issues with inline onclick)
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.theme-toggle')) {
+            toggleDarkMode();
+        }
     });
 
     window.addEventListener('hashchange', router);

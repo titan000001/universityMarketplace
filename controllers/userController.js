@@ -1,5 +1,6 @@
 // controllers/userController.js
 const db = require('../config/database');
+const { deleteFile } = require('../utils/fileUtils');
 
 const getUserProfile = async (req, res) => {
     try {
@@ -53,7 +54,20 @@ const updateProfile = async (req, res) => {
         query += ' WHERE id = ?';
         params.push(userId);
 
-        await db.query(query, params);
+        // Fetch old avatar if we are updating it
+        let oldAvatarUrl = null;
+        if (avatarUrl !== undefined) {
+            const [users] = await db.query('SELECT avatar_url FROM users WHERE id = ?', [userId]);
+            if (users.length > 0) {
+                oldAvatarUrl = users[0].avatar_url;
+            }
+        }
+
+        const [result] = await db.query(query, params);
+
+        if (result.affectedRows > 0 && avatarUrl !== undefined && oldAvatarUrl) {
+            await deleteFile(oldAvatarUrl);
+        }
 
         res.json({ message: 'Profile updated successfully', avatarUrl });
     } catch (error) {

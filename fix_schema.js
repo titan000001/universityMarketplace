@@ -41,7 +41,8 @@ async function fixSchema() {
         "latitude DECIMAL(10, 8)",
         "longitude DECIMAL(11, 8)",
         "location_name VARCHAR(255)",
-        "tags TEXT"                  // NEW
+        "tags TEXT",
+        "shop_id INT"                 // NEW
     ];
     for (const col of productColumns) {
         try {
@@ -53,7 +54,35 @@ async function fixSchema() {
         }
     }
 
+    try {
+        console.log("Adding foreign key shop_id to products...");
+        await connection.execute(`
+            ALTER TABLE products 
+            ADD CONSTRAINT fk_product_shop 
+            FOREIGN KEY (shop_id) REFERENCES shops(id) ON DELETE SET NULL
+        `);
+        console.log("✅  Foreign key added.");
+    } catch (err) {
+        // Ignore if already exists
+    }
+
     // Existing column checks...
+
+    // Create shops table
+    await connection.execute(`
+      CREATE TABLE IF NOT EXISTS shops (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        bio TEXT,
+        logo_url VARCHAR(255),
+        banner_url VARCHAR(255),
+        status VARCHAR(20) DEFAULT 'active',
+        created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+    console.log('✅  Checked/Created shops table.');
 
     // Create missing tables
     await connection.execute(`

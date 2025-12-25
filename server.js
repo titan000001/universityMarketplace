@@ -22,8 +22,9 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(app); // Create HTTP server
 const io = new Server(server, { // Initialize Socket.io
     cors: {
-        origin: "*", // In production, replace with your client URL
-        methods: ["GET", "POST"]
+        origin: process.env.CLIENT_URL || "http://localhost:3000",
+        methods: ["GET", "POST"],
+        credentials: true
     }
 });
 
@@ -34,7 +35,7 @@ app.use(helmet.contentSecurityPolicy({
         defaultSrc: ["'self'"],
         scriptSrc: ["'self'", "'unsafe-inline'", "cdn.tailwindcss.com", "unpkg.com", "cdn.socket.io", "cdnjs.cloudflare.com", "cdn.jsdelivr.net"],
         imgSrc: ["'self'", "data:", "unpkg.com", "placehold.co", "a.tile.openstreetmap.org", "b.tile.openstreetmap.org", "c.tile.openstreetmap.org"],
-        connectSrc: ["'self'", "ws://localhost:3000", "http://localhost:3000"], // Adjust for production
+        connectSrc: ["'self'", "ws://localhost:3000", "http://localhost:3000", process.env.APP_URL || ""].filter(Boolean),
     },
 }));
 
@@ -57,18 +58,51 @@ app.use('/api', apiRoutes);
 // --- 5. Socket.IO Logic ---
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
+const { saveMessage } = require('./controllers/chatController');
+
+io.use((socket, next) => {
+    const token = socket.handshake.auth.token;
+    if (!token) {
+        return next(new Error("Authentication error"));
+    }
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return next(new Error("Authentication error"));
+        }
+        socket.user = decoded;
+        next();
+    });
+});
 
 io.on('connection', (socket) => {
-    // Note: In a production environment, you should use socket.io middleware for this:
-    // io.use((socket, next) => { ... verify token ... })
-
-    console.log(`User Connected: ${socket.id}`);
+    console.log(`User Connected: ${socket.id}, UserID: ${socket.user.userId}`);
 
     socket.on('join_room', (data) => {
-        // SECURITY TODO: Verify if the user has permission to join this room
-        // (e.g., check if they are the buyer or seller for this product/order)
-        socket.join(data);
-        console.log(`User with ID: ${socket.id} joined room: ${data}`);
+        // Verify if the user has permission to join this room
+        const roomRegex = /^prod-\d+-buy-(\d+)-sell-(\d+)$/;
+        const match = data.match(roomRegex);
+
+        let isAuthorized = false;
+
+        if (match) {
+            const buyerId = parseInt(match[1]);
+            const sellerId = parseInt(match[2]);
+            const userId = socket.user.userId;
+            const userRole = socket.user.role;
+
+            if (userId === buyerId || userId === sellerId || userRole === 'admin') {
+                isAuthorized = true;
+            }
+        }
+
+        if (socket.user && isAuthorized) {
+            socket.join(data);
+            console.log(`User with ID: ${socket.id} joined room: ${data}`);
+        } else {
+            console.log(`User with ID: ${socket.id} denied access to room: ${data}`);
+            // Optionally emit an error back to the client
+            socket.emit('error', { message: 'Access denied to room.' });
+        }
     });
 
     socket.on('join_notifications', (userId) => {
@@ -79,8 +113,14 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('send_message', (data) => {
+    socket.on('send_message', async (data) => {
         console.log("Message Sent:", data);
+
+        // Save to database
+        if (socket.user && socket.user.userId) {
+            await saveMessage(data.room, socket.user.userId, data.message);
+        }
+
         socket.to(data.room).emit('receive_message', data);
     });
 

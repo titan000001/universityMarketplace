@@ -14,6 +14,29 @@ const productDetailView = () => `
             <button type="submit" class="mt-2 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700">Post Comment</button>
         </form>
     </div>
+
+    <!-- Report Modal -->
+    <div id="report-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Report Product</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500 dark:text-gray-300">
+                        Why are you reporting this product?
+                    </p>
+                    <textarea id="report-reason" class="w-full mt-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Describe the issue..."></textarea>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="submit-report" class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                        Submit Report
+                    </button>
+                    <button id="cancel-report" class="mt-2 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 `;
 
 const initProductDetail = async (param) => {
@@ -109,9 +132,53 @@ const initProductDetail = async (param) => {
                         <p class="dark:text-gray-300"><strong>Department:</strong> ${product.sellerDept}</p>
                         <p class="dark:text-gray-300"><strong>Contact Phone:</strong> ${product.sellerPhone}</p>
                     </div>
+
+                    <button id="report-btn" class="mt-4 text-red-500 text-sm underline hover:text-red-700">
+                        <i class="fas fa-flag"></i> Report this product
+                    </button>
                 </div>
             </div>
         `;
+
+        // Report Modal Logic
+        const reportBtn = document.getElementById('report-btn');
+        const reportModal = document.getElementById('report-modal');
+        const cancelReportBtn = document.getElementById('cancel-report');
+        const submitReportBtn = document.getElementById('submit-report');
+        const reportReasonInput = document.getElementById('report-reason');
+
+        if (reportBtn) {
+            reportBtn.addEventListener('click', () => {
+                reportModal.classList.remove('hidden');
+            });
+
+            cancelReportBtn.addEventListener('click', () => {
+                reportModal.classList.add('hidden');
+                reportReasonInput.value = '';
+            });
+
+            submitReportBtn.addEventListener('click', async () => {
+                const reason = reportReasonInput.value;
+                if (!reason || reason.trim().length < 5) {
+                    alert('Please provide a valid reason (min 5 chars).');
+                    return;
+                }
+
+                try {
+                    await apiRequest('/reports', 'POST', {
+                        target_type: 'product',
+                        target_id: product.id,
+                        reason: reason
+                    });
+                    alert('Report submitted successfully.');
+                    reportModal.classList.add('hidden');
+                    reportReasonInput.value = '';
+                } catch (error) {
+                    console.error(error);
+                    // Alert is handled by apiRequest mostly, but just in case
+                }
+            });
+        }
 
         // Initialize Map if data exists
         if (product.latitude && product.longitude && window.L) {

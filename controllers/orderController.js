@@ -1,17 +1,20 @@
 // controllers/orderController.js
 const db = require('../config/database');
+const { orderSchema } = require('../validators/commonValidator');
 
 const createOrder = async (req, res) => {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
 
+        const { error } = orderSchema.validate(req.body);
+        if (error) {
+            await connection.rollback();
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
         const userId = req.user.userId;
         const { items } = req.body; // Expecting array of { id, price }
-
-        if (!items || items.length === 0) {
-            return res.status(400).json({ message: 'No items in order.' });
-        }
 
         // Initialize order items and total amount
         const orderItems = [];

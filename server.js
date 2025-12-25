@@ -58,6 +58,7 @@ app.use('/api', apiRoutes);
 // --- 5. Socket.IO Logic ---
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
+const { saveMessage } = require('./controllers/chatController');
 
 io.use((socket, next) => {
     const token = socket.handshake.auth.token;
@@ -78,13 +79,29 @@ io.on('connection', (socket) => {
 
     socket.on('join_room', (data) => {
         // Verify if the user has permission to join this room
-        // For now, we ensure the user is authenticated (handled by middleware)
-        // Future improvement: Check if they are the buyer or seller for this product/order
-        if (socket.user) {
+        const roomRegex = /^prod-\d+-buy-(\d+)-sell-(\d+)$/;
+        const match = data.match(roomRegex);
+
+        let isAuthorized = false;
+
+        if (match) {
+            const buyerId = parseInt(match[1]);
+            const sellerId = parseInt(match[2]);
+            const userId = socket.user.userId;
+            const userRole = socket.user.role;
+
+            if (userId === buyerId || userId === sellerId || userRole === 'admin') {
+                isAuthorized = true;
+            }
+        }
+
+        if (socket.user && isAuthorized) {
             socket.join(data);
             console.log(`User with ID: ${socket.id} joined room: ${data}`);
         } else {
             console.log(`User with ID: ${socket.id} denied access to room: ${data}`);
+            // Optionally emit an error back to the client
+            socket.emit('error', { message: 'Access denied to room.' });
         }
     });
 
@@ -96,8 +113,14 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('send_message', (data) => {
+    socket.on('send_message', async (data) => {
         console.log("Message Sent:", data);
+
+        // Save to database
+        if (socket.user && socket.user.userId) {
+            await saveMessage(data.room, socket.user.userId, data.message);
+        }
+
         socket.to(data.room).emit('receive_message', data);
     });
 

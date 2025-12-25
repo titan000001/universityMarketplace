@@ -45,7 +45,12 @@ const initChat = async (param) => {
 
     // Initialize Socket
     if (!socket) {
-        socket = io('http://localhost:3000'); // Connect to backend
+        const token = localStorage.getItem('token');
+        socket = io('http://localhost:3000', {
+            auth: {
+                token: token
+            }
+        });
     }
 
     const statusEl = document.getElementById('connection-status');
@@ -56,6 +61,24 @@ const initChat = async (param) => {
     statusEl.textContent = 'Connected';
     statusEl.classList.remove('bg-indigo-500');
     statusEl.classList.add('bg-green-500');
+
+    // Load History
+    try {
+        const history = await apiRequest(`/chat/history/${room}`);
+        if (Array.isArray(history)) {
+            history.forEach(msg => {
+                const isOwn = msg.sender_id === currentUser.userId;
+                const messageData = {
+                    author: msg.sender_name, // You might need to adjust this if sender_name is not available or use sender_id
+                    message: msg.message,
+                    time: new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                };
+                appendMessage(messageData, isOwn);
+            });
+        }
+    } catch (err) {
+        console.error("Failed to load chat history", err);
+    }
 
     // Listen for messages
     socket.off('receive_message'); // Remove old listeners to prevent duplicates

@@ -1,6 +1,7 @@
 // controllers/productController.js
 const db = require('../config/database');
 const { deleteFile } = require('../utils/fileUtils');
+const { productSchema } = require('../validators/commonValidator');
 
 const getAllProducts = async (req, res) => {
     try {
@@ -27,7 +28,7 @@ const getAllProducts = async (req, res) => {
             // This part is a bit tricky because a product can have multiple categories.
             // We need to filter products that have at least one of the specified categories.
             // A subquery is a good way to handle this.
-            whereClauses.push(`p.id IN (SELECT product_id FROM product_categories WHERE category_id = ?)`);
+            whereClauses.push(`p.id IN (SELECT product_id FROM product_categories WHERE category_id IN (?))`);
             queryParams.push(category);
         }
 
@@ -100,24 +101,18 @@ const createProduct = async (req, res) => {
     try {
         await connection.beginTransaction();
 
+        const { error } = productSchema.validate(req.body);
+        if (error) {
+            await connection.rollback();
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
         const { title, description, price, categories, location_name, latitude, longitude, tags, shop_id } = req.body;
         const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
         const userId = req.user.userId;
 
-        if (!title || !description || !price) {
-            return res.status(400).json({ message: 'Title, description, and price are required.' });
-        }
-
-        // Basic Coordinate Validation
         const lat = latitude ? parseFloat(latitude) : null;
         const lng = longitude ? parseFloat(longitude) : null;
-
-        if (latitude && (isNaN(lat) || lat < -90 || lat > 90)) {
-            return res.status(400).json({ message: 'Invalid latitude.' });
-        }
-        if (longitude && (isNaN(lng) || lng < -180 || lng > 180)) {
-            return res.status(400).json({ message: 'Invalid longitude.' });
-        }
 
         // Tag Sanitization (limit length and remove extra spaces)
         let sanitizedTags = '';
@@ -205,13 +200,23 @@ const updateProduct = async (req, res) => {
     try {
         await connection.beginTransaction();
         const { id } = req.params;
+        // Validate req.body. Note: Joi validation might need to handle form-data specificities if numbers come as strings
+        // Ideally we validate before transaction but let's keep it here for now
+
+        // For update, we might allow partial updates? But the original code expects all fields.
+        // We can reuse productSchema but it requires all fields.
+        // Let's assume for now the frontend sends everything or we construct it.
+        // Actually, the schema requires title, description, price.
+
+        const { error } = productSchema.validate(req.body);
+         if (error) {
+            await connection.rollback();
+            return res.status(400).json({ message: error.details[0].message });
+        }
+
         const { title, description, price, categories, tags, shop_id } = req.body;
         const imageUrl = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
         const userId = req.user.userId;
-
-        if (!title || !description || !price) {
-            return res.status(400).json({ message: 'All product fields are required.' });
-        }
 
         const [existingProducts] = await connection.query(
             'SELECT image_url FROM products WHERE id = ? AND user_id = ?',

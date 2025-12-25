@@ -9,6 +9,7 @@ const wishlistRoutes = require('./wishlist');
 const commentRoutes = require('./comment');
 const adminRoutes = require('./admin');
 const orderRoutes = require('./order');
+const cartRoutes = require('./cart');
 const { verifyToken } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
@@ -41,5 +42,8 @@ router.use('/admin', adminRoutes);
 
 // --- Order Routes ---
 router.use('/orders', orderRoutes);
+
+// --- Cart Routes ---
+router.use('/cart', cartRoutes);
 
 module.exports = router;

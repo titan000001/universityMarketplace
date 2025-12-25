@@ -95,8 +95,9 @@ async function updateNav() {
     // Check Dark Mode
     const isDark = document.documentElement.classList.contains('dark');
     const modeIcon = isDark ? 'fa-sun' : 'fa-moon';
-    const toggleBtn = `<button class="theme-toggle px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 ml-2">
-        <i class="fas ${modeIcon}"></i>
+    const modeLabel = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+    const toggleBtn = `<button aria-label="${modeLabel}" class="theme-toggle px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 ml-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <i class="fas ${modeIcon} theme-toggle-icon"></i>
     </button>`;
 
     let linksHtml = '';
@@ -156,7 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initDarkMode(); // Initialize theme preference
 
     mobileMenuButton.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
+        const isHidden = mobileMenu.classList.toggle('hidden');
+        mobileMenuButton.setAttribute('aria-expanded', !isHidden);
     });
 
     // Event delegation for theme toggle (bypasses CSP issues with inline onclick)

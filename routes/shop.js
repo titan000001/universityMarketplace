@@ -6,7 +6,7 @@ const { verifyToken } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
 // Public routes
-router.get('/', shopController.getAllShops);
+router.get('/', shopController.getShops);
 router.get('/:id', shopController.getShopById);
 
 // Protected routes

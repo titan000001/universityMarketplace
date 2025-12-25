@@ -32,7 +32,7 @@ const io = new Server(server, { // Initialize Socket.io
 app.use(helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "cdn.tailwindcss.com", "unpkg.com", "cdn.socket.io", "cdnjs.cloudflare.com"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "cdn.tailwindcss.com", "unpkg.com", "cdn.socket.io", "cdnjs.cloudflare.com", "cdn.jsdelivr.net"],
         imgSrc: ["'self'", "data:", "unpkg.com", "placehold.co", "a.tile.openstreetmap.org", "b.tile.openstreetmap.org", "c.tile.openstreetmap.org"],
         connectSrc: ["'self'", "ws://localhost:3000", "http://localhost:3000"], // Adjust for production
     },
@@ -41,7 +41,8 @@ app.use(helmet.contentSecurityPolicy({
 // Rate Limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+    max: 1000, // Limit each IP to 1000 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.'
 });
 app.use(limiter);
 
@@ -68,6 +69,13 @@ io.on('connection', (socket) => {
         // (e.g., check if they are the buyer or seller for this product/order)
         socket.join(data);
         console.log(`User with ID: ${socket.id} joined room: ${data}`);
+    });
+
+    socket.on('join_notifications', (userId) => {
+        if (userId) {
+            socket.join(`user_${userId}`);
+            console.log(`User ${userId} joined notification channel`);
+        }
     });
 
     socket.on('send_message', (data) => {

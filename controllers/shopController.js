@@ -2,15 +2,17 @@
 const db = require('../config/database');
 const { deleteFile } = require('../utils/fileUtils');
 
-const getAllShops = async (req, res) => {
+const getShops = async (req, res) => {
     try {
-        const [shops] = await db.query(`
-            SELECT s.*, u.name AS ownerName 
+        const query = `
+            SELECT s.*, u.name as owner_name, 
+            (SELECT AVG(rating) FROM reviews WHERE target_user_id = s.user_id) as average_rating,
+            (SELECT COUNT(*) FROM reviews WHERE target_user_id = s.user_id) as review_count
             FROM shops s 
             JOIN users u ON s.user_id = u.id 
-            WHERE s.status = 'active'
             ORDER BY s.created_at DESC
-        `);
+        `;
+        const [shops] = await db.query(query);
         res.json(shops);
     } catch (error) {
         console.error('Get Shops Error:', error);
@@ -141,7 +143,7 @@ const deleteShop = async (req, res) => {
 };
 
 module.exports = {
-    getAllShops,
+    getShops,
     getShopById,
     getMyShop,
     createShop,

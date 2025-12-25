@@ -10,6 +10,8 @@ const commentRoutes = require('./comment');
 const adminRoutes = require('./admin');
 const orderRoutes = require('./order');
 const shopRoutes = require('./shop');
+const notificationRoutes = require('./notification');
+const reviewRoutes = require('./review');
 const { verifyToken } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
@@ -45,5 +47,11 @@ router.use('/orders', orderRoutes);
 
 // --- Shop Routes ---
 router.use('/shops', shopRoutes);
+
+// --- Notification Routes ---
+router.use('/notifications', notificationRoutes);
+
+// --- Review Routes ---
+router.use('/reviews', reviewRoutes);
 
 module.exports = router;

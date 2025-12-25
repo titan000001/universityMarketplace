@@ -99,19 +99,26 @@ const initShops = async () => {
                     <a href="#/shops/${shop.id}" class="block bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all card-3d overflow-hidden border border-gray-100 dark:border-gray-700 animate__animated animate__fadeInUp" style="animation-delay: ${i * 100}ms">
                         <div class="h-32 bg-indigo-100 dark:bg-indigo-900/30 relative">
                             ${shop.banner_url ? `<img src="${shop.banner_url}" class="w-full h-full object-cover">` : ''}
-                            <div class="absolute -bottom-10 left-6">
-                                <img src="${shop.logo_url || '/images/default-shop.png'}" alt="${shop.name}" class="w-20 h-20 rounded-xl border-4 border-white dark:border-gray-800 shadow-md object-cover bg-white dark:bg-gray-700">
+                            <div class="w-20 h-20 rounded-full border-4 border-white dark:border-gray-800 absolute -bottom-10 left-6 object-cover bg-white">
+                                ${shop.logo_url ? `<img src="${shop.logo_url}" alt="${shop.name}" class="w-full h-full rounded-full object-cover">` : '<div class="w-full h-full flex items-center justify-center text-2xl bg-indigo-200">🏪</div>'}
                             </div>
                         </div>
-                        <div class="pt-12 p-6">
-                            <h3 class="font-bold text-xl mb-2 dark:text-white uppercase tracking-tight">${shop.name}</h3>
-                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 line-clamp-2">${shop.bio || 'A student-led shop dedicated to quality goods.'}</p>
-                            <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
-                                <span class="text-xs font-medium text-gray-500 dark:text-gray-500">Founded by ${shop.ownerName}</span>
-                                <span class="text-indigo-600 dark:text-indigo-400 text-sm font-bold flex items-center">
-                                    View Shop <i class="fas fa-arrow-right ml-2 text-xs"></i>
-                                </span>
+                        <div class="pt-12 px-6 pb-6">
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">${shop.name}</h3>
+                            <div class="flex items-center mb-2">
+                                <span class="text-yellow-400 mr-1"><i class="fas fa-star"></i></span>
+                                <span class="text-sm font-medium text-gray-600 dark:text-gray-300">${shop.average_rating ? parseFloat(shop.average_rating).toFixed(1) : 'New'} <span class="text-gray-400 text-xs">(${shop.review_count || 0})</span></span>
                             </div>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">${shop.bio || 'No bio yet.'}</p>
+                            <div class="flex items-center justify-between text-xs text-gray-400">
+                                <span><i class="fas fa-user-circle mr-1"></i> ${shop.owner_name}</span>
+                                <span><i class="fas fa-clock mr-1"></i> ${new Date(shop.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-4 pt-4 px-6 border-t border-gray-100 dark:border-gray-700">
+                            <span class="text-indigo-600 dark:text-indigo-400 text-sm font-bold flex items-center">
+                                View Shop <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                            </span>
                         </div>
                     </a>
                 `).join('');

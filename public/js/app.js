@@ -7,6 +7,39 @@ const navLinks = document.getElementById('nav-links');
 const mobileMenu = document.getElementById('mobile-menu');
 const mobileMenuButton = document.getElementById('mobile-menu-button');
 
+// Socket.io initialization
+const socket = io();
+
+// Notification Logic
+socket.on('connect', () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        const payload = parseJwt(token);
+        if (payload && payload.userId) {
+            socket.emit('join_notifications', payload.userId);
+        }
+    }
+});
+
+socket.on('receive_notification', (data) => {
+    // Assuming showToast is defined elsewhere or needs to be implemented
+    // For now, we'll just log and update the badge
+    console.log('Received notification:', data.message);
+    updateNotificationBadge();
+});
+
+function updateNotificationBadge() {
+    const badge = document.getElementById('notification-badge');
+    if (badge) {
+        let count = parseInt(badge.innerText) || 0;
+        badge.innerText = count + 1;
+        badge.classList.remove('hidden');
+    }
+}
+
+// Global functions
+window.currentView = 'home';
+
 // Dark Mode Logic
 function initDarkMode() {
     const html = document.documentElement;

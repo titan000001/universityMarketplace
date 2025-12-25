@@ -7,7 +7,7 @@ import { myProductsView, initMyProducts } from './views/my-products.js';
 import { profileView, initProfile } from './views/profile.js';
 import { productDetailView, initProductDetail } from './views/product-detail.js';
 import { editProductView, initEditProduct } from './views/edit-product.js';
-import { adminView, initAdmin } from './views/admin.js';
+import { adminView, initAdmin } from './views/adminView.js';
 import { wishlistView, initWishlist } from './views/wishlist.js';
 import { cartView, initCart } from './views/cart.js';
 import { checkoutView, initCheckout } from './views/checkout.js';

@@ -1,5 +1,5 @@
 // public/js/services/api.js
-const API_URL = 'http://localhost:3000/api';
+const API_URL = '/api';
 
 import { showToast } from '../utils/toast.js';
 
@@ -23,10 +23,16 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
     try {
         const response = await fetch(API_URL + endpoint, options);
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'An error occurred');
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'An error occurred');
+            } else {
+                const text = await response.text();
+                throw new Error(text || `Request failed with status ${response.status}`);
+            }
         }
-        if (response.status === 204 || response.status === 200 && method === 'DELETE') {
+        if (response.status === 204 || (response.status === 200 && method === 'DELETE')) {
              return { message: 'Success' };
         }
         return response.json();

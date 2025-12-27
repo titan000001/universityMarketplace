@@ -72,23 +72,13 @@ const initShops = async () => {
         const formData = new FormData(form);
 
         try {
-            const token = localStorage.getItem('token');
-            const response = await fetch('/api/shops', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
-                body: formData
-            });
-
-            if (response.ok) {
-                showToast('Shop created successfully!', 'success');
-                modal.classList.add('hidden');
-                loadShops();
-            } else {
-                const data = await response.json();
-                showToast(data.message || 'Error creating shop', 'error');
-            }
+            await apiRequest('/shops', 'POST', formData);
+            showToast('Shop created successfully!', 'success');
+            modal.classList.add('hidden');
+            loadShops();
         } catch (err) {
             console.error('Create Shop Error:', err);
+            alert(err.message || 'Error creating shop');
         }
     });
 

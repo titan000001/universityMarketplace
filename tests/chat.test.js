@@ -1,3 +1,4 @@
+process.env.JWT_SECRET = 'test_secret';
 
 const request = require('supertest');
 const app = require('../server');
@@ -10,7 +11,7 @@ describe('Chat Endpoints', () => {
     let token;
 
     beforeAll(() => {
-        token = jwt.sign({ userId: 1, role: 'user' }, process.env.JWT_SECRET || 'testsecret');
+        token = jwt.sign({ userId: 1, role: 'user' }, process.env.JWT_SECRET);
     });
 
     afterEach(() => {

@@ -1,6 +1,7 @@
 // public/js/views/manageShopView.js
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
+import { showToast } from '../utils/toast.js';
 
 const manageShopView = () => `
     <div class="max-w-2xl mx-auto">
@@ -96,7 +97,7 @@ const initManageShop = async () => {
         document.getElementById('delete-shop-btn')?.addEventListener('click', async () => {
             if (confirm('Are you sure you want to delete your shop? Your products will remain as individual listings.')) {
                 await apiRequest(`/shops/${shop.id}`, 'DELETE');
-                alert('Shop deleted successfully.');
+                showToast('Shop deleted successfully.', 'success');
                 navigate('/profile');
             }
         });
@@ -111,7 +112,7 @@ const initManageShop = async () => {
                 const url = isEditing ? `/shops/${shop.id}` : '/shops';
 
                 await apiRequest(url, method, formData);
-                alert(isEditing ? 'Shop updated!' : 'Congratulations! Your shop is live!');
+                showToast(isEditing ? 'Shop updated!' : 'Congratulations! Your shop is live!', 'success');
                 navigate('/profile');
             } catch (err) {
                 console.error(err);

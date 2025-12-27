@@ -1,6 +1,7 @@
 // public/js/views/sell.js
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
+import { showToast } from '../utils/toast.js';
 
 const sellView = () => `
     <div class="max-w-lg mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transition-colors duration-200">

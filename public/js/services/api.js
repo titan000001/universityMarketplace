@@ -1,6 +1,8 @@
 // public/js/services/api.js
 const API_URL = 'http://localhost:3000/api';
 
+import { showToast } from '../utils/toast.js';
+
 async function apiRequest(endpoint, method = 'GET', body = null) {
     const token = localStorage.getItem('token');
     const options = {
@@ -29,7 +31,7 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
         }
         return response.json();
     } catch (error) {
-        alert(`Error: ${error.message}`);
+        showToast(error.message, 'error');
         console.error('API Request Error:', error);
         throw error;
     }

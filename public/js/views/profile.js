@@ -1,5 +1,6 @@
 // public/js/views/profile.js
 import { apiRequest } from '../services/api.js';
+import { showToast } from '../utils/toast.js';
 
 const profileView = () => `
     <div id="profile-content" class="max-w-4xl mx-auto">
@@ -129,11 +130,11 @@ const initProfile = async (param) => {
 
                 try {
                     await apiRequest('/users/profile', 'PUT', formData);
-                    alert('Profile updated successfully!');
+                    showToast('Profile updated successfully!', 'success');
                     initProfile(param); // Refresh view
                 } catch (error) {
                     console.error(error);
-                    alert('Failed to update profile.');
+                    showToast('Failed to update profile.', 'error');
                 }
             });
         }

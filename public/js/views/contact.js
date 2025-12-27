@@ -1,4 +1,6 @@
 
+import { showToast } from '../utils/toast.js';
+
 const contactView = () => `
     <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden glass-panel animate__animated animate__fadeInUp">
         <div class="p-8 md:p-12">
@@ -66,7 +68,7 @@ const initContact = () => {
             btn.classList.remove('bg-indigo-600');
 
             setTimeout(() => {
-                alert("Thanks! Your message has been sent to our support team.");
+                showToast("Thanks! Your message has been sent to our support team.", 'success');
                 window.location.hash = '/';
             }, 500);
         }, 1500);

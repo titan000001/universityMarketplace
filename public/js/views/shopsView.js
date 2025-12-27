@@ -1,5 +1,6 @@
 // public/js/views/shopsView.js
 import { apiRequest } from '../services/api.js';
+import { showToast } from '../utils/toast.js';
 
 const shopsView = () => `
     <div class="mb-12 animate__animated animate__fadeIn">
@@ -57,7 +58,7 @@ const initShops = async () => {
     // Modal Logic
     openBtn?.addEventListener('click', () => {
         if (!localStorage.getItem('token')) {
-            alert('Please login to create a shop!');
+            showToast('Please login to create a shop!', 'info');
             window.location.hash = '#/login';
             return;
         }
@@ -79,12 +80,12 @@ const initShops = async () => {
             });
 
             if (response.ok) {
-                alert('Shop created successfully!');
+                showToast('Shop created successfully!', 'success');
                 modal.classList.add('hidden');
                 loadShops();
             } else {
                 const data = await response.json();
-                alert(data.message || 'Error creating shop');
+                showToast(data.message || 'Error creating shop', 'error');
             }
         } catch (err) {
             console.error('Create Shop Error:', err);

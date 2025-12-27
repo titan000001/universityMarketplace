@@ -1,6 +1,7 @@
 // public/js/views/register.js
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
+import { showToast } from '../utils/toast.js';
 
 const registerView = () => `
     <div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transition-colors duration-200">
@@ -49,9 +50,9 @@ const initRegister = () => {
         const data = Object.fromEntries(formData.entries());
         try {
             await apiRequest('/register', 'POST', data);
-            alert('Registration successful! Please log in.');
+            showToast('Registration successful! Please log in.', 'success');
             navigate('/login');
-        } catch (error) { /* alert is handled in apiRequest */ }
+        } catch (error) { /* toast is handled in apiRequest */ }
     });
 };
 

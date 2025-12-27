@@ -1,6 +1,7 @@
 import { apiRequest } from '../services/api.js';
 import { getCart, addToCart, removeFromCart } from '../services/cart.js';
 import { updateNav } from '../app.js';
+import { showToast } from '../utils/toast.js';
 
 const productDetailView = () => `
      <div id="product-detail-content" class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md max-w-4xl mx-auto transition-colors duration-200">
@@ -160,7 +161,7 @@ const initProductDetail = async (param) => {
             submitReportBtn.addEventListener('click', async () => {
                 const reason = reportReasonInput.value;
                 if (!reason || reason.trim().length < 5) {
-                    alert('Please provide a valid reason (min 5 chars).');
+                    showToast('Please provide a valid reason (min 5 chars).', 'error');
                     return;
                 }
 
@@ -170,7 +171,7 @@ const initProductDetail = async (param) => {
                         target_id: product.id,
                         reason: reason
                     });
-                    alert('Report submitted successfully.');
+                    showToast('Report submitted successfully.', 'success');
                     reportModal.classList.add('hidden');
                     reportReasonInput.value = '';
                 } catch (error) {

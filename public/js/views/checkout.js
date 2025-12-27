@@ -2,6 +2,7 @@
 import { getCart, clearCart } from '../services/cart.js';
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
+import { showToast } from '../utils/toast.js';
 
 const checkoutView = () => `
     <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transition-colors duration-200">
@@ -43,7 +44,7 @@ const initCheckout = () => {
     const cart = getCart();
 
     if (cart.length === 0) {
-        alert('Your cart is empty.');
+        showToast('Your cart is empty.', 'info');
         navigate('/cart');
         return;
     }
@@ -70,7 +71,7 @@ const initCheckout = () => {
             const items = cart.map(item => ({ id: item.id, price: item.price }));
             const response = await apiRequest('/orders', 'POST', { items });
 
-            alert(`Order Placed Successfully! Order ID: ${response.orderId}`);
+            showToast(`Order Placed Successfully! Order ID: ${response.orderId}`, 'success');
 
             clearCart();
             // In a real app, update nav for cart count

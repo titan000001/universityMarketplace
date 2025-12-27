@@ -14,6 +14,7 @@ const notificationRoutes = require('./notification');
 const reviewRoutes = require('./review');
 const reportRoutes = require('./report');
 const chatRoutes = require('./chat');
+const cartRoutes = require('./cart');
 const { verifyToken } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
@@ -61,5 +62,8 @@ router.use('/reports', reportRoutes);
 
 // --- Chat Routes ---
 router.use('/chat', chatRoutes);
+
+// --- Cart Routes ---
+router.use('/cart', cartRoutes);
 
 module.exports = router;

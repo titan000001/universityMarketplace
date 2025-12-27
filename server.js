@@ -10,6 +10,7 @@ const rateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 const path = require('path');
 const apiRoutes = require('./routes/api');
+const { errorHandler, notFoundHandler } = require('./middleware/errorMiddleware');
 require('./config/database'); // Establishes database connection
 
 // --- 2. Setup ---
@@ -129,7 +130,14 @@ io.on('connection', (socket) => {
     });
 });
 
-// --- 6. Fallback Route ---
+// --- 6. Error Handling & Fallback Route ---
+
+// API 404 handler (if request starts with /api but matches no route)
+app.use('/api/*', notFoundHandler);
+
+// Central Error Handler (should be after routes)
+app.use(errorHandler);
+
 // This ensures that any direct navigation to frontend routes (e.g., /login, /profile) are handled by serving the index.html.
 // The frontend router will then display the correct page.
 app.get('*', (req, res) => {

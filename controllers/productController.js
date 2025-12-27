@@ -3,7 +3,16 @@ const db = require('../config/database');
 const { deleteFile } = require('../utils/fileUtils');
 const { productSchema } = require('../validators/commonValidator');
 
-const getAllProducts = async (req, res) => {
+// Helper: Process Categories
+const processCategories = async (connection, productId, categories) => {
+    if (categories) {
+        const categoryIds = Array.isArray(categories) ? categories : [categories];
+        const categoryValues = categoryIds.map(catId => [productId, catId]);
+        await connection.query('INSERT INTO product_categories (product_id, category_id) VALUES ?', [categoryValues]);
+    }
+};
+
+const getAllProducts = async (req, res, next) => {
     try {
         const { search, category } = req.query;
 
@@ -41,12 +50,11 @@ const getAllProducts = async (req, res) => {
         const [products] = await db.query(query, queryParams);
         res.json(products);
     } catch (error) {
-        console.error('Get Products Error:', error);
-        res.status(500).json({ message: 'Server error fetching products.' });
+        next(error);
     }
 };
 
-const getProductById = async (req, res) => {
+const getProductById = async (req, res, next) => {
     try {
         const { id } = req.params;
         const [products] = await db.query(
@@ -62,7 +70,8 @@ const getProductById = async (req, res) => {
         );
 
         if (products.length === 0) {
-            return res.status(404).json({ message: 'Product not found.' });
+            res.status(404);
+            throw new Error('Product not found.');
         }
 
         const product = products[0];
@@ -74,7 +83,6 @@ const getProductById = async (req, res) => {
         if (product.categories) {
             // Get the first category (primary for comparison)
             const firstCategory = product.categories.split(',')[0].trim();
-
             const [stats] = await db.query(`
                 SELECT AVG(p.price) as avgPrice, COUNT(p.id) as count
                 FROM products p
@@ -91,12 +99,11 @@ const getProductById = async (req, res) => {
 
         res.json({ ...product, averagePrice, categoryProductCount: productCount });
     } catch (error) {
-        console.error('Get Product Detail Error:', error);
-        res.status(500).json({ message: 'Server error fetching product details.' });
+        next(error);
     }
 };
 
-const createProduct = async (req, res) => {
+const createProduct = async (req, res, next) => {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
@@ -110,6 +117,11 @@ const createProduct = async (req, res) => {
         const { title, description, price, categories, location_name, latitude, longitude, tags, shop_id } = req.body;
         const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
         const userId = req.user.userId;
+
+        if (!title || !description || !price) {
+            res.status(400);
+            throw new Error('Title, description, and price are required.');
+        }
 
         const lat = latitude ? parseFloat(latitude) : null;
         const lng = longitude ? parseFloat(longitude) : null;
@@ -135,35 +147,29 @@ const createProduct = async (req, res) => {
         );
         const productId = result.insertId;
 
-        if (categories) {
-            const categoryIds = Array.isArray(categories) ? categories : [categories];
-            const categoryValues = categoryIds.map(catId => [productId, catId]);
-            await connection.query('INSERT INTO product_categories (product_id, category_id) VALUES ?', [categoryValues]);
-        }
+        await processCategories(connection, productId, categories);
 
         await connection.commit();
         res.status(201).json({ message: 'Product listed successfully!', productId });
     } catch (error) {
         await connection.rollback();
-        console.error('Create Product Error:', error);
-        res.status(500).json({ message: 'Server error creating product.' });
+        next(error);
     } finally {
         connection.release();
     }
 };
 
-const getMyProducts = async (req, res) => {
+const getMyProducts = async (req, res, next) => {
     try {
         const userId = req.user.userId;
         const [products] = await db.query('SELECT * FROM products WHERE user_id = ? ORDER BY created_at DESC', [userId]);
         res.json(products);
     } catch (error) {
-        console.error('Get My Products Error:', error);
-        res.status(500).json({ message: 'Server error fetching user products.' });
+        next(error);
     }
 };
 
-const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res, next) => {
     try {
         const { id } = req.params;
         const userId = req.user.userId;
@@ -184,18 +190,22 @@ const deleteProduct = async (req, res) => {
             [id, userId]
         );
 
+        if (result.affectedRows === 0) {
+            res.status(404);
+            throw new Error('Product not found or you do not have permission to delete it.');
+        }
+
         if (result.affectedRows > 0 && oldImageUrl) {
             await deleteFile(oldImageUrl);
         }
 
         res.json({ message: 'Product deleted successfully.' });
     } catch (error) {
-        console.error('Delete Product Error:', error);
-        res.status(500).json({ message: 'Server error deleting product.' });
+        next(error);
     }
 };
 
-const updateProduct = async (req, res) => {
+const updateProduct = async (req, res, next) => {
     const connection = await db.getConnection();
     try {
         await connection.beginTransaction();
@@ -209,7 +219,7 @@ const updateProduct = async (req, res) => {
         // Actually, the schema requires title, description, price.
 
         const { error } = productSchema.validate(req.body);
-         if (error) {
+        if (error) {
             await connection.rollback();
             return res.status(400).json({ message: error.details[0].message });
         }
@@ -217,6 +227,11 @@ const updateProduct = async (req, res) => {
         const { title, description, price, categories, tags, shop_id } = req.body;
         const imageUrl = req.file ? `/uploads/${req.file.filename}` : req.body.image_url;
         const userId = req.user.userId;
+
+        if (!title || !description || !price) {
+            res.status(400);
+            throw new Error('All product fields are required.');
+        }
 
         const [existingProducts] = await connection.query(
             'SELECT image_url FROM products WHERE id = ? AND user_id = ?',
@@ -249,23 +264,23 @@ const updateProduct = async (req, res) => {
             [title, description, price, imageUrl, sanitizedTags, shop_id || null, id, userId]
         );
 
+        if (result.affectedRows === 0) {
+            res.status(404);
+            throw new Error('Product not found or you do not have permission to update it.');
+        }
+
         if (result.affectedRows > 0 && req.file && oldImageUrl && oldImageUrl !== imageUrl) {
             await deleteFile(oldImageUrl);
         }
 
         await connection.query('DELETE FROM product_categories WHERE product_id = ?', [id]);
-        if (categories) {
-            const categoryIds = Array.isArray(categories) ? categories : [categories];
-            const categoryValues = categoryIds.map(catId => [id, catId]);
-            await connection.query('INSERT INTO product_categories (product_id, category_id) VALUES ?', [categoryValues]);
-        }
+        await processCategories(connection, id, categories);
 
         await connection.commit();
         res.json({ message: 'Product updated successfully.' });
     } catch (error) {
         await connection.rollback();
-        console.error('Update Product Error:', error);
-        res.status(500).json({ message: 'Server error updating product.' });
+        next(error);
     } finally {
         connection.release();
     }

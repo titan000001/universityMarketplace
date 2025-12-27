@@ -77,6 +77,7 @@ const initShops = async () => {
             loadShops();
         } catch (err) {
             console.error('Create Shop Error:', err);
+            alert(err.message || 'Error creating shop');
         }
     });
 

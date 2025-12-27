@@ -46,7 +46,8 @@ const initChat = async (param) => {
     // Initialize Socket
     if (!socket) {
         const token = localStorage.getItem('token');
-        socket = io('http://localhost:3000', {
+        // Use relative path/origin for socket connection
+        socket = io({
             auth: {
                 token: token
             }

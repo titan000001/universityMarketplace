@@ -1,3 +1,4 @@
+process.env.JWT_SECRET = 'test_secret';
 
 const request = require('supertest');
 const app = require('../server'); // Adjust path as needed
@@ -11,8 +12,8 @@ describe('Report Endpoints', () => {
     let adminToken;
 
     beforeAll(() => {
-        token = jwt.sign({ userId: 1, role: 'user' }, process.env.JWT_SECRET || 'testsecret');
-        adminToken = jwt.sign({ userId: 2, role: 'admin' }, process.env.JWT_SECRET || 'testsecret');
+        token = jwt.sign({ userId: 1, role: 'user' }, process.env.JWT_SECRET);
+        adminToken = jwt.sign({ userId: 2, role: 'admin' }, process.env.JWT_SECRET);
     });
 
     afterEach(() => {

@@ -2,6 +2,7 @@
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
 import { showToast } from '../utils/toast.js';
+import { setLoading } from '../utils/loading.js';
 
 const registerView = () => `
     <div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transition-colors duration-200">
@@ -46,13 +47,21 @@ const registerView = () => `
 const initRegister = () => {
     document.getElementById('register-form').addEventListener('submit', async e => {
         e.preventDefault();
+        const button = e.target.querySelector('button[type="submit"]');
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
+
+        setLoading(button, true, 'Registering...');
+
         try {
             await apiRequest('/register', 'POST', data);
             showToast('Registration successful! Please log in.', 'success');
             navigate('/login');
-        } catch (error) { /* toast is handled in apiRequest */ }
+        } catch (error) {
+            /* toast is handled in apiRequest */
+        } finally {
+            setLoading(button, false);
+        }
     });
 };
 

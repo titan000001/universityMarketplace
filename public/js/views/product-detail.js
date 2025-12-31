@@ -2,6 +2,7 @@ import { apiRequest } from '../services/api.js';
 import { getCart, addToCart, removeFromCart } from '../services/cart.js';
 import { updateNav } from '../app.js';
 import { showToast } from '../utils/toast.js';
+import { setLoading } from '../utils/loading.js';
 
 const productDetailView = () => `
      <div id="product-detail-content" class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md max-w-4xl mx-auto transition-colors duration-200">
@@ -212,13 +213,18 @@ const initProductDetail = async (param) => {
         const wishlistBtn = document.getElementById('wishlist-btn');
         if (wishlistBtn) {
             wishlistBtn.addEventListener('click', async () => {
-                if (isWishlisted) {
-                    await apiRequest(`/wishlist/${product.id}`, 'DELETE');
-                } else {
-                    await apiRequest('/wishlist', 'POST', { productId: product.id });
+                try {
+                    setLoading(wishlistBtn, true, isWishlisted ? 'Removing...' : 'Adding...');
+                    if (isWishlisted) {
+                        await apiRequest(`/wishlist/${product.id}`, 'DELETE');
+                    } else {
+                        await apiRequest('/wishlist', 'POST', { productId: product.id });
+                    }
+                    updateNav(); // Update the wishlist count in navbar
+                    initProductDetail(param); // Re-render the view to update the button
+                } catch (error) {
+                    setLoading(wishlistBtn, false);
                 }
-                updateNav(); // Update the wishlist count in navbar
-                initProductDetail(param); // Re-render the view to update the button
             });
         }
 

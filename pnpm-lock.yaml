@@ -30,7 +30,7 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0
       joi:
-        specifier: ^17.11.0
+        specifier: ^17.13.3
         version: 17.13.3
       jsonwebtoken:
         specifier: ^9.0.2

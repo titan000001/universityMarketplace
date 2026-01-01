@@ -1,0 +1,3 @@
+## 2025-02-18 - [Loading States for Async Forms]
+**Learning:** Users often double-submit forms or feel uncertain when there is no visual feedback during asynchronous operations (like login, registration, or posting comments). A simple loading spinner and disabled button state significantly improves perceived performance and prevents errors.
+**Action:** Implemented a reusable `setLoading` utility in `public/js/utils/loading.js` that disables the button, swaps the text for a spinner, and restores the original state. Applied this to Login, Register, Sell, and Product Detail (comments) forms. Future forms should use this utility by default.

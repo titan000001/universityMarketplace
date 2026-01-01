@@ -2,6 +2,7 @@ import { apiRequest } from '../services/api.js';
 import { getCart, addToCart, removeFromCart } from '../services/cart.js';
 import { updateNav } from '../app.js';
 import { showToast } from '../utils/toast.js';
+import { setLoading } from '../utils/loading.js';
 
 const productDetailView = () => `
      <div id="product-detail-content" class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md max-w-4xl mx-auto transition-colors duration-200">
@@ -236,8 +237,12 @@ const initProductDetail = async (param) => {
         }
 
 
-        document.getElementById('comment-form').addEventListener('submit', async (e) => {
+        const commentForm = document.getElementById('comment-form');
+        commentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitBtn = commentForm.querySelector('button[type="submit"]');
+            setLoading(submitBtn, true);
+
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
             try {
@@ -245,6 +250,7 @@ const initProductDetail = async (param) => {
                 initProductDetail(param); // Re-render to show the new comment
             } catch (error) {
                 // error is already alerted in apiRequest
+                setLoading(submitBtn, false);
             }
         });
 

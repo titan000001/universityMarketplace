@@ -8,6 +8,8 @@ const db = mysql.createPool({
     database: process.env.DB_DATABASE
 }).promise();
 
+let mockMode = false;
+
 db.getConnection()
     .then(connection => {
         console.log('✅  MySQL Connection successful!');
@@ -15,6 +17,11 @@ db.getConnection()
     })
     .catch(err => {
         console.error('❌  MySQL Connection failed:', err.message);
+        console.warn('⚠️  Switching to MOCK MODE. Data will be served from local fallbacks.');
+        mockMode = true;
     });
+
+// Attach the flag to the pool object for easy access
+db.mockMode = () => mockMode;
 
 module.exports = db;

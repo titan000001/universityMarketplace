@@ -14,6 +14,16 @@ const processCategories = async (connection, productId, categories) => {
 
 const getAllProducts = async (req, res, next) => {
     try {
+        if (db.mockMode && db.mockMode()) {
+            console.warn('⚠️  Serving MOCK PRODUCTS');
+            const mockProducts = [
+                { id: 101, title: 'Calculus Early Transcendentals', price: '89.99', image_url: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f', sellerId: 1, sellerName: 'Jane Doe', shopName: 'Janes Books', categories: 'Textbooks' },
+                { id: 102, title: 'TI-84 Plus CE Color', price: '120.00', image_url: 'https://images.unsplash.com/photo-1587145820266-a5951eebebb1', sellerId: 2, sellerName: 'John Smith', shopName: 'Tech Resale', categories: 'Electronics' },
+                { id: 103, title: 'Dorm Fridge (Mini)', price: '45.00', image_url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a', sellerId: 3, sellerName: 'Bob Builder', shopName: null, categories: 'Appliances' }
+            ];
+            return res.json(mockProducts);
+        }
+
         const { search, category } = req.query;
 
         let query = `
@@ -56,6 +66,27 @@ const getAllProducts = async (req, res, next) => {
 
 const getProductById = async (req, res, next) => {
     try {
+        if (db.mockMode && db.mockMode()) {
+            console.warn('⚠️  Serving MOCK PRODUCT DETAIL');
+            const { id } = req.params;
+            // Simple mock detail based on ID or generic
+            return res.json({
+                id: id,
+                title: 'Mock Product Detail',
+                description: 'This is a mock description for demonstration purposes because the database is offline.',
+                price: '99.99',
+                image_url: 'https://placehold.co/600x400',
+                sellerId: 1,
+                sellerName: 'Mock Seller',
+                sellerPhone: '555-0123',
+                sellerDept: 'Computer Science',
+                categories: 'Textbooks, Electronics',
+                averagePrice: 100,
+                categoryProductCount: 5,
+                tags: 'mock, demo, offline'
+            });
+        }
+
         const { id } = req.params;
         const [products] = await db.query(
             `SELECT p.id, p.title, p.description, p.price, p.image_url, p.tags, p.shop_id, u.id AS sellerId, u.name AS sellerName, u.phone AS sellerPhone, u.dept AS sellerDept, s.name AS shopName, GROUP_CONCAT(c.name) AS categories

@@ -1,6 +1,7 @@
 // public/js/views/edit-product.js
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
+import { showToast } from '../utils/toast.js';
 
 const editProductView = () => `
     <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">

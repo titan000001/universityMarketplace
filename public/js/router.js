@@ -7,10 +7,17 @@ import { myProductsView, initMyProducts } from './views/my-products.js';
 import { profileView, initProfile } from './views/profile.js';
 import { productDetailView, initProductDetail } from './views/product-detail.js';
 import { editProductView, initEditProduct } from './views/edit-product.js';
-import { adminView, initAdmin } from './views/admin.js';
+import { adminView, initAdmin } from './views/adminView.js';
 import { wishlistView, initWishlist } from './views/wishlist.js';
 import { cartView, initCart } from './views/cart.js';
+import { checkoutView, initCheckout } from './views/checkout.js';
 import { updateNav } from './app.js';
+import { chatView, initChat } from './views/chat.js';
+import { aboutView, initAbout } from './views/about.js';
+import { contactView, initContact } from './views/contact.js';
+import { shopsView, initShops } from './views/shopsView.js';
+import { shopProfileView, initShopProfile } from './views/shopProfileView.js';
+import { manageShopView, initManageShop } from './views/manageShopView.js';
 
 const routes = {
     '/': { view: homeView, init: initHome },
@@ -23,7 +30,14 @@ const routes = {
     '/cart': { view: cartView, init: initCart },
     '/products/:id': { view: productDetailView, init: initProductDetail },
     '/edit-product/:id': { view: editProductView, init: initEditProduct },
-    '/admin': { view: adminView, init: initAdmin }
+    '/admin': { view: adminView, init: initAdmin },
+    '/chat/:params': { view: chatView, init: initChat },
+    '/about': { view: aboutView, init: initAbout },
+    '/contact': { view: contactView, init: initContact },
+    '/checkout': { view: checkoutView, init: initCheckout },
+    '/shops': { view: shopsView, init: initShops },
+    '/shops/:id': { view: shopProfileView, init: initShopProfile },
+    '/manage-shop': { view: manageShopView, init: initManageShop }
 };
 
 const mainContent = document.getElementById('main-content');
@@ -55,7 +69,8 @@ async function router() {
                 params[part.substring(1)] = pathParts[i];
             }
         });
-        param = params.id;
+        // Simplistic assumption that we only ever have "id" or "params"
+        param = params.id || params.params;
         view = routes[match];
     }
 

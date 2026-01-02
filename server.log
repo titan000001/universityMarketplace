@@ -1,0 +1,74 @@
+
+> university-student-marketplace@1.0.0 start /app
+> node server.js
+
+✅  Server is running on http://localhost:3000
+❌  MySQL Connection failed:
+Get Products Error: Error
+    at PromisePool.query (/app/node_modules/.pnpm/mysql2@3.16.0/node_modules/mysql2/lib/promise/pool.js:36:22)
+    at getAllProducts (/app/controllers/productController.js:41:37)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at /app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:346:12)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:175:3) {
+  code: 'ECONNREFUSED',
+  errno: undefined,
+  sql: undefined,
+  sqlState: undefined,
+  sqlMessage: undefined
+}
+Get All Categories Error: Error
+    at PromisePool.query (/app/node_modules/.pnpm/mysql2@3.16.0/node_modules/mysql2/lib/promise/pool.js:36:22)
+    at getAllCategories (/app/controllers/categoryController.js:6:39)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at /app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:346:12)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:175:3) {
+  code: 'ECONNREFUSED',
+  errno: undefined,
+  sql: undefined,
+  sqlState: undefined,
+  sqlMessage: undefined
+}
+Get Products Error: Error
+    at PromisePool.query (/app/node_modules/.pnpm/mysql2@3.16.0/node_modules/mysql2/lib/promise/pool.js:36:22)
+    at getAllProducts (/app/controllers/productController.js:41:37)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at /app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:346:12)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:175:3) {
+  code: 'ECONNREFUSED',
+  errno: undefined,
+  sql: undefined,
+  sqlState: undefined,
+  sqlMessage: undefined
+}
+Get All Categories Error: Error
+    at PromisePool.query (/app/node_modules/.pnpm/mysql2@3.16.0/node_modules/mysql2/lib/promise/pool.js:36:22)
+    at getAllCategories (/app/controllers/categoryController.js:6:39)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at /app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:284:15
+    at Function.process_params (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:346:12)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:280:10)
+    at Function.handle (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:175:3) {
+  code: 'ECONNREFUSED',
+  errno: undefined,
+  sql: undefined,
+  sqlState: undefined,
+  sqlMessage: undefined
+}

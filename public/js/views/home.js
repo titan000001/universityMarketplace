@@ -1,20 +1,37 @@
 // public/js/views/home.js
 import { apiRequest } from '../services/api.js';
+import { debounce } from '../utils/debounce.js';
 
 const homeView = () => `
-    <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-800">Marketplace</h1>
-        <p class="text-lg text-gray-600">Buy and sell items from fellow students.</p>
+    <div class="relative bg-gray-900 text-white rounded-2xl overflow-hidden mb-12 shadow-2xl h-[400px] group">
+        <img src="/images/hero-banner.jpg" alt="University Campus" class="absolute inset-0 w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105">
+        <div class="relative z-10 p-8 md:p-16 h-full flex flex-col justify-center items-start text-left bg-gradient-to-r from-indigo-900/90 via-indigo-900/40 to-transparent">
+            <h1 class="text-5xl md:text-7xl font-extrabold mb-4 text-white drop-shadow-xl tracking-tight leading-tight">
+                UniMarket
+                <span class="block text-2xl md:text-3xl font-medium mt-3 text-indigo-200">Your Campus. Your Economy.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-100 max-w-lg mb-8 drop-shadow-md font-light leading-relaxed">
+                The trusted platform to find cheap textbooks, sell old gear, and connect safely with students at your university.
+            </p>
+            <div class="flex gap-4">
+                <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="px-8 py-3 bg-white text-indigo-700 font-bold rounded-full shadow-lg hover:bg-gray-100 hover:shadow-xl transition-all transform hover:-translate-y-1">
+                    Browse Items
+                </button>
+                <a href="#/sell" class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-full shadow-lg btn-flashy border border-indigo-400 backdrop-blur-sm bg-opacity-90">
+                    Start Selling
+                </a>
+            </div>
+        </div>
     </div>
     <div class="mb-8 flex justify-center gap-4">
-        <input type="search" id="search-bar" placeholder="Search for items..." class="w-full md:w-1/2 px-4 py-2 border rounded-lg">
-        <select id="category-filter" class="px-4 py-2 border rounded-lg">
+        <input type="search" id="search-bar" aria-label="Search products" placeholder="Search for items..." class="w-full md:w-1/2 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+        <select id="category-filter" aria-label="Filter by category" class="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             <option value="">All Categories</option>
             <!-- Categories will be loaded here -->
         </select>
     </div>
     <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="text-center p-8 text-gray-500">Loading items... <i class="fas fa-spinner fa-spin"></i></div>
+        <div class="text-center p-8 text-gray-500 dark:text-gray-400">Loading items... <i class="fas fa-spinner fa-spin"></i></div>
     </div>
 `;
 
@@ -60,17 +77,7 @@ const initHome = async () => {
 
     const renderProducts = (productsToRender) => {
         // Combine placeholders with real products if we are showing the initial list or if the search matches them
-        // For simplicity in this demo, we'll ALWAYS prepend them unless the user is specifically filtering out their categories/names.
-        // But to keep it "dumb" and simple as requested: just prepend them to the list passed in.
-
         let allDisplayProducts = [...placeholderProducts, ...productsToRender];
-
-        // If filtering is active (search or category), we might want to filter the placeholders too, 
-        // but for a "demo" presence, let's keep them handy or just filter them simply.
-        // Let's rely on the upstream filter for real products, and do a quick client-side filter for placeholders if needed.
-        // Actually, to ensure they show up in searches, let's just add them to the initial 'products' list effectively 
-        // by modifying the upstream call or just handling it here. 
-        // Simplest approach: Just render them at the top always for visibility.
 
         // Re-filtering for search/category on placeholders to respect UI state:
         const searchTerm = searchBar.value.toLowerCase();
@@ -79,57 +86,61 @@ const initHome = async () => {
         if (searchTerm || categoryId) {
             const filteredPlaceholders = placeholderProducts.filter(p => {
                 const matchesSearch = p.title.toLowerCase().includes(searchTerm);
-                // Placeholder categories are strings "Textbooks", real categories use IDs in filter. 
-                // This mismatch makes category filtering placeholders tricky without mapping.
-                // Let's just show them if no category is selected, or ignore category filter for them to keep them visible as "Featured".
+                // Placeholder categories are strings "Textbooks", real categories use IDs in filter.
+                // Let's just show them if no category is selected, or ignore category filter for them.
                 return matchesSearch;
             });
-            // usage:
             allDisplayProducts = [...filteredPlaceholders, ...productsToRender];
         }
 
-
         if (allDisplayProducts.length > 0) {
-            productGrid.innerHTML = allDisplayProducts.map(p => {
+            productGrid.innerHTML = allDisplayProducts.map((p, i) => {
                 // Safe title for onclick
                 const safeTitle = p.title.replace(/'/g, "\\'");
                 const safeSellerName = p.sellerName.replace(/'/g, "\\'");
 
                 return `
-                <div class="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow flex flex-col h-full">
+                <div class="block bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-3d flex flex-col h-full animate__animated animate__fadeInUp" style="animation-delay: ${i * 100}ms">
                     <a href="#/products/${p.id}" class="block">
                         <img src="${p.image_url}" alt="${p.title}" class="w-full h-48 object-cover">
                     </a>
                     <div class="p-4 flex flex-col flex-grow">
                         <a href="#/products/${p.id}">
-                            <h3 class="font-bold text-lg">${p.title}</h3>
+                            <h3 class="font-bold text-lg mb-1 dark:text-white">${p.title}</h3>
                         </a>
-                        <p class="text-indigo-600 font-semibold text-xl">$${p.price}</p>
-                        <div class="mt-2 mb-4">
-                            ${p.categories ? p.categories.split(',').map(cat => `<span class="bg-gray-200 text-gray-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">${cat}</span>`).join('') : ''}
+                        <p class="text-indigo-600 dark:text-indigo-400 font-semibold text-xl mb-2">$${p.price}</p>
+                        <div class="mb-2">
+                            ${p.categories ? p.categories.split(',').map(cat => `<span class="bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full border border-gray-300 dark:border-gray-600">${cat}</span>`).join('') : ''}
                         </div>
                         
                         <div class="mt-auto space-y-2">
                              <div class="grid grid-cols-2 gap-2">
-                                <button onclick="window.addToWishlist('${p.id}', '${safeTitle}', '${safeSellerName}')" class="flex items-center justify-center px-3 py-2 border border-indigo-600 text-indigo-600 text-sm font-medium rounded-md hover:bg-indigo-50">
+                                <button onclick="window.addToWishlist('${p.id}', '${safeTitle}', '${safeSellerName}')" class="flex items-center justify-center px-3 py-2 border border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 text-sm font-medium rounded-md hover:bg-indigo-50 dark:hover:bg-gray-700">
                                     <i class="far fa-heart mr-2"></i> Wishlist
                                 </button>
-                                <button onclick="alert('Demo: Contacting seller ${p.sellerName}...')" class="flex items-center justify-center px-3 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50">
+                                <button onclick="alert('Demo: Contacting seller ${safeSellerName}...')" class="flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
                                     <i class="far fa-envelope mr-2"></i> Contact
                                 </button>
                             </div>
-                            <button onclick="alert('Demo: Starting purchase for ${p.title}...')" class="w-full flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
+                            <button onclick="alert('Demo: Starting purchase for ${safeTitle}...')" class="w-full flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
                                 <i class="fas fa-shopping-cart mr-2"></i> Buy Now
                             </button>
                         </div>
 
-                        <p class="text-gray-500 text-xs mt-3">Sold by <a href="#/profile/${p.sellerId}" class="text-indigo-600 hover:underline" onclick="event.stopPropagation()">${p.sellerName}</a></p>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mt-2 pt-2 border-t border-gray-100 dark:border-gray-700">
+                            Sold by <a href="#/profile/${p.sellerId}" class="text-indigo-600 dark:text-indigo-400 hover:underline" onclick="event.stopPropagation()">${p.sellerName}</a>
+                        </p>
                     </div>
                 </div>
             `;
             }).join('');
         } else {
-            productGrid.innerHTML = '<p class="text-center col-span-full">No items match your search.</p>';
+            productGrid.innerHTML = `
+                <div class="col-span-full text-center py-12">
+                    <img src="/images/empty-state.png" alt="No items found" class="mx-auto w-48 mb-4 opacity-75">
+                    <p class="text-xl text-gray-500 dark:text-gray-400">Oops! No items match your search.</p>
+                </div>
+            `;
         }
     };
 
@@ -149,7 +160,7 @@ const initHome = async () => {
         renderProducts(filteredProducts);
     };
 
-    searchBar.addEventListener('input', filterAndRender);
+    searchBar.addEventListener('input', debounce(filterAndRender, 300));
     categoryFilter.addEventListener('change', filterAndRender);
 
     // Global Wishlist Handler

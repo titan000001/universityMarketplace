@@ -27,7 +27,34 @@ const deleteUser = async (req, res) => {
     }
 };
 
+const getAnalytics = async (req, res) => {
+    try {
+        const [userCount] = await db.query('SELECT COUNT(*) as count FROM users');
+        const [productCount] = await db.query('SELECT COUNT(*) as count FROM products');
+        const [orderCount] = await db.query('SELECT COUNT(*) as count FROM orders');
+
+        // Simple daily joins for the last 7 days
+        const [dailyUsers] = await db.query(`
+            SELECT DATE(created_at) as date, COUNT(*) as count 
+            FROM users 
+            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) 
+            GROUP BY DATE(created_at)
+        `);
+
+        res.json({
+            totalUsers: userCount[0].count,
+            totalProducts: productCount[0].count,
+            totalOrders: orderCount[0].count,
+            dailyUsers
+        });
+    } catch (error) {
+        console.error('Analytics Error:', error);
+        res.status(500).json({ message: 'Server error fetching analytics.' });
+    }
+};
+
 module.exports = {
     getAllUsers,
     deleteUser,
+    getAnalytics
 };

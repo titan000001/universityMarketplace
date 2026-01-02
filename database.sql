@@ -17,17 +17,32 @@ CREATE TABLE IF NOT EXISTS `users` (
   `role` VARCHAR(50) NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Shops table for student businesses
+CREATE TABLE IF NOT EXISTS `shops` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
+  `bio` TEXT,
+  `logo_url` VARCHAR(255),
+  `banner_url` VARCHAR(255),
+  `status` VARCHAR(20) DEFAULT 'active',
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Products table to store items for sale
 CREATE TABLE IF NOT EXISTS `products` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `user_id` INT NOT NULL,
+  `shop_id` INT DEFAULT NULL,
   `title` VARCHAR(255) NOT NULL,
   `description` TEXT NOT NULL,
   `price` DECIMAL(10, 2) NOT NULL,
   `image_url` VARCHAR(2083) NOT NULL,
   `status` VARCHAR(50) NOT NULL DEFAULT 'available',
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`shop_id`) REFERENCES `shops`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Categories table for products
@@ -75,6 +90,49 @@ CREATE TABLE IF NOT EXISTS `comments` (
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE,
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Reviews Table
+CREATE TABLE IF NOT EXISTS `reviews` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `reviewer_id` INT NOT NULL,
+  `target_user_id` INT NOT NULL,
+  `rating` INT NOT NULL CHECK (`rating` >= 1 AND `rating` <= 5),
+  `comment` TEXT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`reviewer_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`target_user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Notifications Table
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `message` TEXT NOT NULL,
+  `type` VARCHAR(50) NOT NULL,
+  `is_read` BOOLEAN DEFAULT FALSE,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Carts table (One active cart per user)
+CREATE TABLE IF NOT EXISTS `carts` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL UNIQUE,
+  `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Cart Items table
+CREATE TABLE IF NOT EXISTS `cart_items` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `cart_id` INT NOT NULL,
+  `product_id` INT NOT NULL,
+  `quantity` INT NOT NULL DEFAULT 1,
+  FOREIGN KEY (`cart_id`) REFERENCES `carts`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE CASCADE,
+  UNIQUE KEY `unique_product_in_cart` (`cart_id`, `product_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /* 

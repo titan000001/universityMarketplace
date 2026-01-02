@@ -8,6 +8,13 @@ const userRoutes = require('./user');
 const wishlistRoutes = require('./wishlist');
 const commentRoutes = require('./comment');
 const adminRoutes = require('./admin');
+const orderRoutes = require('./order');
+const shopRoutes = require('./shop');
+const notificationRoutes = require('./notification');
+const reviewRoutes = require('./review');
+const reportRoutes = require('./report');
+const chatRoutes = require('./chat');
+const cartRoutes = require('./cart');
 const { verifyToken } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
@@ -37,5 +44,26 @@ router.put('/products/:id', verifyToken, upload.single('image'), productControll
 
 // --- Admin Routes ---
 router.use('/admin', adminRoutes);
+
+// --- Order Routes ---
+router.use('/orders', orderRoutes);
+
+// --- Shop Routes ---
+router.use('/shops', shopRoutes);
+
+// --- Notification Routes ---
+router.use('/notifications', notificationRoutes);
+
+// --- Review Routes ---
+router.use('/reviews', reviewRoutes);
+
+// --- Report Routes ---
+router.use('/reports', reportRoutes);
+
+// --- Chat Routes ---
+router.use('/chat', chatRoutes);
+
+// --- Cart Routes ---
+router.use('/cart', cartRoutes);
 
 module.exports = router;

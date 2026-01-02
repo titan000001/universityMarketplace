@@ -29,6 +29,12 @@ const createComment = async (req, res) => {
             return res.status(400).json({ message: 'Comment cannot be empty.' });
         }
 
+        // Check if product exists
+        const [products] = await db.query('SELECT id FROM products WHERE id = ?', [productId]);
+        if (products.length === 0) {
+            return res.status(404).json({ message: 'Product not found.' });
+        }
+
         const [result] = await db.query(
             'INSERT INTO comments (product_id, user_id, comment) VALUES (?, ?, ?)',
             [productId, userId, comment]
@@ -41,7 +47,26 @@ const createComment = async (req, res) => {
     }
 };
 
+const deleteComment = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.userId;
+
+        const [result] = await db.query('DELETE FROM comments WHERE id = ? AND user_id = ?', [id, userId]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Comment not found or you do not have permission to delete it.' });
+        }
+
+        res.json({ message: 'Comment deleted successfully.' });
+    } catch (error) {
+        console.error('Delete Comment Error:', error);
+        res.status(500).json({ message: 'Server error deleting comment.' });
+    }
+};
+
 module.exports = {
     getCommentsForProduct,
     createComment,
+    deleteComment,
 };

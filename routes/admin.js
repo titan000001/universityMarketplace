@@ -12,6 +12,9 @@ router.use(verifyToken, isAdmin);
 router.get('/users', adminController.getAllUsers);
 
 // DELETE /api/admin/users/:id - Delete a user
-router.delete('/users/:id', adminController.deleteUser);
+router.delete('/users/:id', isAdmin, adminController.deleteUser);
+
+// GET /api/admin/analytics - Get platform stats
+router.get('/analytics', isAdmin, adminController.getAnalytics);
 
 module.exports = router;

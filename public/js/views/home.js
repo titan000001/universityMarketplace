@@ -1,5 +1,6 @@
 // public/js/views/home.js
 import { apiRequest } from '../services/api.js';
+import { debounce } from '../utils/debounce.js';
 
 const homeView = () => `
     <div class="relative bg-gray-900 text-white rounded-2xl overflow-hidden mb-12 shadow-2xl h-[400px] group">
@@ -23,8 +24,8 @@ const homeView = () => `
         </div>
     </div>
     <div class="mb-8 flex justify-center gap-4">
-        <input type="search" id="search-bar" placeholder="Search for items..." class="w-full md:w-1/2 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
-        <select id="category-filter" class="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+        <input type="search" id="search-bar" aria-label="Search products" placeholder="Search for items..." class="w-full md:w-1/2 px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400">
+        <select id="category-filter" aria-label="Filter by category" class="px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white">
             <option value="">All Categories</option>
             <!-- Categories will be loaded here -->
         </select>
@@ -91,7 +92,7 @@ const initHome = async () => {
         renderProducts(filteredProducts);
     };
 
-    searchBar.addEventListener('input', filterAndRender);
+    searchBar.addEventListener('input', debounce(filterAndRender, 300));
     categoryFilter.addEventListener('change', filterAndRender);
 };
 

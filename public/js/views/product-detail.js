@@ -17,15 +17,15 @@ const productDetailView = () => `
     </div>
 
     <!-- Report Modal -->
-    <div id="report-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div id="report-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
             <div class="mt-3 text-center">
-                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Report Product</h3>
+                <h3 id="report-modal-title" class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Report Product</h3>
                 <div class="mt-2 px-7 py-3">
                     <p class="text-sm text-gray-500 dark:text-gray-300">
                         Why are you reporting this product?
                     </p>
-                    <textarea id="report-reason" class="w-full mt-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Describe the issue..."></textarea>
+                    <textarea id="report-reason" class="w-full mt-2 p-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Describe the issue..." aria-label="Reason for reporting"></textarea>
                 </div>
                 <div class="items-center px-4 py-3">
                     <button id="submit-report" class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
@@ -147,16 +147,25 @@ const initProductDetail = async (param) => {
         const cancelReportBtn = document.getElementById('cancel-report');
         const submitReportBtn = document.getElementById('submit-report');
         const reportReasonInput = document.getElementById('report-reason');
+        let previouslyFocusedElement;
 
         if (reportBtn) {
             reportBtn.addEventListener('click', () => {
+                previouslyFocusedElement = document.activeElement;
                 reportModal.classList.remove('hidden');
+                // Wait for the modal to be visible before focusing
+                setTimeout(() => reportReasonInput.focus(), 50);
             });
 
-            cancelReportBtn.addEventListener('click', () => {
+            const closeModal = () => {
                 reportModal.classList.add('hidden');
                 reportReasonInput.value = '';
-            });
+                if (previouslyFocusedElement) {
+                    previouslyFocusedElement.focus();
+                }
+            };
+
+            cancelReportBtn.addEventListener('click', closeModal);
 
             submitReportBtn.addEventListener('click', async () => {
                 const reason = reportReasonInput.value;
@@ -172,8 +181,7 @@ const initProductDetail = async (param) => {
                         reason: reason
                     });
                     showToast('Report submitted successfully.', 'success');
-                    reportModal.classList.add('hidden');
-                    reportReasonInput.value = '';
+                    closeModal();
                 } catch (error) {
                     console.error(error);
                     // Alert is handled by apiRequest mostly, but just in case

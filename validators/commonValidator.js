@@ -13,7 +13,7 @@ const productSchema = Joi.object({
     location_name: Joi.string().optional(),
     latitude: Joi.number().min(-90).max(90).optional(),
     longitude: Joi.number().min(-180).max(180).optional(),
-    shop_id: Joi.number().integer().optional(),
+    shop_id: Joi.number().integer().allow(null, '').optional(),
     image_url: Joi.string().optional() // For update
 });
 

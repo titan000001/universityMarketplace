@@ -42,6 +42,7 @@ const initHome = async () => {
     ]);
 
     const categoryFilter = document.getElementById('category-filter');
+    const searchBar = document.getElementById('search-bar');
     categoryFilter.innerHTML += categories.map(cat => `<option value="${cat.id}">${cat.name}</option>`).join('');
 
     const productGrid = document.getElementById('product-grid');
@@ -50,7 +51,7 @@ const initHome = async () => {
             id: 'demo-1',
             title: 'Demo: Engineering Textbook',
             price: '45.00',
-            image_url: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=500&q=60',
+            image_url: '/images/demos/textbook.jpg',
             sellerId: 0,
             sellerName: 'Demo Student',
             categories: 'Textbooks'
@@ -59,7 +60,7 @@ const initHome = async () => {
             id: 'demo-2',
             title: 'Demo: Graphing Calculator',
             price: '85.50',
-            image_url: 'https://images.unsplash.com/photo-1587145820266-a5951eebebb1?auto=format&fit=crop&w=500&q=60',
+            image_url: '/images/demos/laptop.jpg',
             sellerId: 0,
             sellerName: 'Demo Student',
             categories: 'Electronics'
@@ -68,7 +69,7 @@ const initHome = async () => {
             id: 'demo-3',
             title: 'Demo: Study Lamp',
             price: '15.00',
-            image_url: 'https://images.unsplash.com/photo-1534234058263-08053a25170d?auto=format&fit=crop&w=500&q=60',
+            image_url: '/images/demos/desk.jpg',
             sellerId: 0,
             sellerName: 'Demo Student',
             categories: 'Furniture'
@@ -102,7 +103,7 @@ const initHome = async () => {
                 return `
                 <div class="block bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden card-3d flex flex-col h-full animate__animated animate__fadeInUp" style="animation-delay: ${i * 100}ms">
                     <a href="#/products/${p.id}" class="block">
-                        <img src="${p.image_url}" alt="${p.title}" class="w-full h-48 object-cover">
+                        <img src="${p.image_url}" alt="${p.title}" class="w-full h-48 object-cover" onerror="this.onerror=null;this.src='/images/hero-banner.jpg';">
                     </a>
                     <div class="p-4 flex flex-col flex-grow">
                         <a href="#/products/${p.id}">
@@ -114,16 +115,16 @@ const initHome = async () => {
                         </div>
                         
                         <div class="mt-auto space-y-2">
-                             <div class="grid grid-cols-2 gap-2">
-                                <button onclick="window.addToWishlist('${p.id}', '${safeTitle}', '${safeSellerName}')" class="flex items-center justify-center px-3 py-2 border border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 text-sm font-medium rounded-md hover:bg-indigo-50 dark:hover:bg-gray-700">
-                                    <i class="far fa-heart mr-2"></i> Wishlist
+                            <div class="grid grid-cols-2 gap-2">
+                                <button data-action="wishlist" data-id="${p.id}" data-title="${safeTitle}" data-seller="${safeSellerName}" class="flex items-center justify-center px-3 py-2 border border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 text-sm font-medium rounded-md hover:bg-indigo-50 dark:hover:bg-gray-700">
+                                    <i class="far fa-heart mr-2 pointer-events-none"></i> Wishlist
                                 </button>
-                                <button onclick="alert('Demo: Contacting seller ${safeSellerName}...')" class="flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
-                                    <i class="far fa-envelope mr-2"></i> Contact
+                                <button data-action="contact" data-seller="${safeSellerName}" class="flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
+                                    <i class="far fa-envelope mr-2 pointer-events-none"></i> Contact
                                 </button>
                             </div>
-                            <button onclick="alert('Demo: Starting purchase for ${safeTitle}...')" class="w-full flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
-                                <i class="fas fa-shopping-cart mr-2"></i> Buy Now
+                            <button data-action="buy" data-title="${safeTitle}" class="w-full flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
+                                <i class="fas fa-shopping-cart mr-2 pointer-events-none"></i> Buy Now
                             </button>
                         </div>
 
@@ -163,8 +164,31 @@ const initHome = async () => {
     searchBar.addEventListener('input', debounce(filterAndRender, 300));
     categoryFilter.addEventListener('change', filterAndRender);
 
-    // Global Wishlist Handler
-    window.addToWishlist = async (id, title, sellerName) => {
+    // Event Delegation for Product Grid
+    productGrid.addEventListener('click', async (e) => {
+        const button = e.target.closest('button');
+        if (!button) return;
+
+        const action = button.dataset.action;
+        if (!action) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (action === 'wishlist') {
+            const { id, title, seller } = button.dataset;
+            await addToWishlistHandler(id, title, seller);
+        } else if (action === 'contact') {
+            const { seller } = button.dataset;
+            alert(`Demo: Contacting seller ${seller}...`);
+        } else if (action === 'buy') {
+            const { title } = button.dataset;
+            alert(`Demo: Starting purchase for ${title}...`);
+        }
+    });
+
+    // Internal Wishlist Handler
+    const addToWishlistHandler = async (id, title, sellerName) => {
         // Check if demo product
         if (id.toString().startsWith('demo') || isNaN(id)) {
             alert(`Demo: Added ${title} to your Wishlist!`);

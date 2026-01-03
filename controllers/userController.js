@@ -6,6 +6,23 @@ const getUserProfile = async (req, res) => {
     try {
         const { id } = req.params;
 
+        if (db.mockMode && db.mockMode()) {
+            console.warn('⚠️  Serving MOCK PROFILE');
+            return res.json({
+                user: {
+                    id: id,
+                    name: 'Mock User',
+                    dept: 'Computer Science',
+                    bio: 'This is a mock profile running in offline mode.',
+                    avatar_url: 'https://placehold.co/150',
+                    social_links: '{"twitter": "@mock", "instagram": "@mock"}'
+                },
+                products: [
+                    { id: 101, title: 'Calculus Early Transcendentals', price: '89.99', image_url: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f', created_at: new Date() }
+                ]
+            });
+        }
+
         const [users] = await db.query('SELECT id, name, dept, bio, avatar_url, social_links FROM users WHERE id = ?', [id]);
         const user = users[0];
 
@@ -24,6 +41,12 @@ const getUserProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
+        if (db.mockMode && db.mockMode()) {
+            console.warn('⚠️  Mock Profile Update Successful');
+            const avatarUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+            return res.json({ message: 'Profile updated successfully (Mock)', avatarUrl });
+        }
+
         const userId = req.user.userId;
         const { bio, social_links } = req.body;
         let avatarUrl = undefined;

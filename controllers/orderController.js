@@ -76,4 +76,57 @@ const createOrder = async (req, res) => {
     }
 };
 
-module.exports = { createOrder };
+const getMyOrders = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+
+        // Fetch orders with items and product details
+        // We can do this in one query or two. One query with JSON aggregation is efficient in MySQL 5.7/8.0
+        // Or simple join and process in JS.
+
+        const [rows] = await db.query(`
+            SELECT 
+                o.id as orderId, o.total_amount, o.status, o.created_at,
+                oi.id as itemId, oi.price as itemPrice,
+                p.id as productId, p.title, p.image_url
+            FROM orders o
+            JOIN order_items oi ON o.id = oi.order_id
+            JOIN products p ON oi.product_id = p.id
+            WHERE o.user_id = ?
+            ORDER BY o.created_at DESC
+        `, [userId]);
+
+        // Group by Order ID
+        const ordersMap = new Map();
+
+        for (const row of rows) {
+            if (!ordersMap.has(row.orderId)) {
+                ordersMap.set(row.orderId, {
+                    id: row.orderId,
+                    total_amount: row.total_amount,
+                    status: row.status,
+                    created_at: row.created_at,
+                    items: []
+                });
+            }
+            const order = ordersMap.get(row.orderId);
+            order.items.push({
+                id: row.itemId,
+                price: row.itemPrice,
+                product: {
+                    id: row.productId,
+                    title: row.title,
+                    image_url: row.image_url
+                }
+            });
+        }
+
+        const orders = Array.from(ordersMap.values());
+        res.json(orders);
+    } catch (error) {
+        console.error('Get My Orders Error:', error);
+        res.status(500).json({ message: 'Server error fetching orders.' });
+    }
+};
+
+module.exports = { createOrder, getMyOrders };

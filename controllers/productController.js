@@ -88,6 +88,18 @@ const getProductById = async (req, res, next) => {
         }
 
         const { id } = req.params;
+
+        // Handle Demo Items (Hardcoded in frontend for initial impression)
+        if (id.toString().startsWith('demo-')) {
+            const demoItems = {
+                'demo-1': { id: 'demo-1', title: 'Demo: Engineering Textbook', price: '45.00', image_url: '/images/demos/textbook.jpg', description: 'Sample textbook for demonstration.', sellerName: 'Demo Student', sellerId: 0, categories: 'Textbooks' },
+                'demo-2': { id: 'demo-2', title: 'Demo: Graphing Calculator', price: '85.50', image_url: '/images/demos/laptop.jpg', description: 'Sample electronics item.', sellerName: 'Demo Student', sellerId: 0, categories: 'Electronics' },
+                'demo-3': { id: 'demo-3', title: 'Demo: Study Lamp', price: '15.00', image_url: '/images/demos/desk.jpg', description: 'Sample furniture item.', sellerName: 'Demo Student', sellerId: 0, categories: 'Furniture' }
+            };
+            const item = demoItems[id];
+            if (item) return res.json(item);
+            return res.status(404).json({ message: 'Demo product not found' });
+        }
         const [products] = await db.query(
             `SELECT p.id, p.title, p.description, p.price, p.image_url, p.tags, p.shop_id, u.id AS sellerId, u.name AS sellerName, u.phone AS sellerPhone, u.dept AS sellerDept, s.name AS shopName, GROUP_CONCAT(c.name) AS categories
              FROM products p

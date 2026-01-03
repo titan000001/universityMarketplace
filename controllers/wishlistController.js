@@ -22,6 +22,14 @@ const addToWishlist = async (req, res) => {
         const userId = req.user.userId;
         const { productId } = req.body;
 
+        const [products] = await db.query('SELECT user_id, title FROM products WHERE id = ?', [productId]);
+        if (products.length === 0) {
+            return res.status(404).json({ message: 'Product not found.' });
+        }
+        if (products[0].user_id === userId) {
+            return res.status(403).json({ message: 'You cannot add your own product to the wishlist.' });
+        }
+
         await db.query('INSERT INTO wishlist (user_id, product_id) VALUES (?, ?)', [userId, productId]);
 
         res.status(201).json({ message: 'Product added to wishlist.' });

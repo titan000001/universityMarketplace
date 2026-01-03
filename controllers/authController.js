@@ -7,6 +7,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 const register = async (req, res) => {
     try {
+        if (db.mockMode && db.mockMode()) {
+            console.warn('⚠️  Serving MOCK REGISTRATION');
+            return res.status(201).json({ message: 'Mock User registered successfully!', userId: 999 });
+        }
+
         const { error } = registerSchema.validate(req.body);
         if (error) {
             return res.status(400).json({ message: error.details[0].message });
@@ -35,6 +40,16 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     try {
+        if (db.mockMode && db.mockMode()) {
+            console.warn('⚠️  Serving MOCK LOGIN');
+            const token = jwt.sign(
+                { userId: 1, name: 'Mock User', role: 'user' },
+                JWT_SECRET || 'mock_secret',
+                { expiresIn: '1h' }
+            );
+            return res.json({ message: 'Mock Login successful!', token });
+        }
+
         const { error } = loginSchema.validate(req.body);
         if (error) {
             return res.status(400).json({ message: error.details[0].message });

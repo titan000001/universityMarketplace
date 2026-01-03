@@ -18,6 +18,7 @@ import { contactView, initContact } from './views/contact.js';
 import { shopsView, initShops } from './views/shopsView.js';
 import { shopProfileView, initShopProfile } from './views/shopProfileView.js';
 import { manageShopView, initManageShop } from './views/manageShopView.js';
+import { ordersView, initOrders } from './views/orders.js';
 
 const routes = {
     '/': { view: homeView, init: initHome },
@@ -37,7 +38,8 @@ const routes = {
     '/checkout': { view: checkoutView, init: initCheckout },
     '/shops': { view: shopsView, init: initShops },
     '/shops/:id': { view: shopProfileView, init: initShopProfile },
-    '/manage-shop': { view: manageShopView, init: initManageShop }
+    '/manage-shop': { view: manageShopView, init: initManageShop },
+    '/orders': { view: ordersView, init: initOrders }
 };
 
 const mainContent = document.getElementById('main-content');

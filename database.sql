@@ -148,3 +148,24 @@ CREATE TABLE IF NOT EXISTS `cart_items` (
   INSERT INTO `products` (`user_id`, `title`, `description`, `price`, `image_url`)
   VALUES (1, 'Used Calculus Textbook', 'Great condition, minimal highlighting.', 45.50, 'https://via.placeholder.com/150');
 */
+
+-- Reports Table
+CREATE TABLE IF NOT EXISTS reports (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  reporter_id INT NOT NULL,
+  target_type VARCHAR(50) NOT NULL,
+  target_id INT NOT NULL,
+  reason TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Messages Table
+CREATE TABLE IF NOT EXISTS messages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  room_id VARCHAR(255) NOT NULL,
+  sender_id INT NOT NULL,
+  message TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

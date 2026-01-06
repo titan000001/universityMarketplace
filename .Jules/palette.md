@@ -14,3 +14,7 @@
 ## 2024-05-23 - Alert vs Toast
 **Learning:** The application uses a mix of `showToast` and relying on `apiRequest` error handling. Some interactions have no visual feedback other than the UI updating.
 **Action:** Standardize on `showToast` for success/error messages to provide consistent non-blocking feedback, especially for screen reader users (if implemented with `role="status"`).
+
+## 2025-05-27 - Icon-Only Buttons
+**Learning:** Icon-only buttons (like "Send" or "Remove") are invisible to screen readers without an `aria-label`. Visually they are clear, but programmatically they are empty.
+**Action:** Always add `aria-label` to buttons that contain only icons.

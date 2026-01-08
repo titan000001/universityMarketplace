@@ -24,8 +24,8 @@ const initMyProducts = async () => {
                         <p class="text-gray-600">$${p.price}</p>
                     </div>
                     <div>
-                        <a href="#/edit-product/${p.id}" class="edit-btn bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2">Edit</a>
-                        <button data-id="${p.id}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete</button>
+                        <a href="#/edit-product/${p.id}" aria-label="Edit ${p.title.replace(/"/g, '&quot;')}" class="edit-btn bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2">Edit</a>
+                        <button data-id="${p.id}" aria-label="Delete ${p.title.replace(/"/g, '&quot;')}" class="delete-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Delete</button>
                     </div>
                 </div>
             `).join('');

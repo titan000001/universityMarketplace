@@ -66,7 +66,15 @@ const initCheckout = () => {
     totalEl.textContent = `$${total.toFixed(2)}`;
 
     // Confirm Order
-    document.getElementById('confirm-order-btn').addEventListener('click', async () => {
+    const confirmBtn = document.getElementById('confirm-order-btn');
+    confirmBtn.addEventListener('click', async () => {
+        const originalContent = confirmBtn.innerHTML;
+
+        // Add loading state
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Processing Order...`;
+        confirmBtn.classList.add('cursor-not-allowed', 'opacity-75');
+
         try {
             const items = cart.map(item => ({ id: item.id, price: item.price }));
             const response = await apiRequest('/orders', 'POST', { items });
@@ -79,7 +87,10 @@ const initCheckout = () => {
             navigate('/');
         } catch (error) {
             console.error(error);
-            // Alert handled by apiRequest mostly, but just in case
+            // Re-enable on error
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = originalContent;
+            confirmBtn.classList.remove('cursor-not-allowed', 'opacity-75');
         }
     });
 

@@ -1,6 +1,7 @@
 // public/js/views/home.js
 import { apiRequest } from '../services/api.js';
 import { debounce } from '../utils/debounce.js';
+import { showToast } from '../utils/toast.js';
 
 const homeView = () => `
     <div class="relative bg-gray-900 text-white rounded-2xl overflow-hidden mb-12 shadow-2xl h-[400px] group">
@@ -116,14 +117,14 @@ const initHome = async () => {
                         
                         <div class="mt-auto space-y-2">
                             <div class="grid grid-cols-2 gap-2">
-                                <button data-action="wishlist" data-id="${p.id}" data-title="${safeTitle}" data-seller="${safeSellerName}" class="flex items-center justify-center px-3 py-2 border border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 text-sm font-medium rounded-md hover:bg-indigo-50 dark:hover:bg-gray-700">
+                                <button data-action="wishlist" data-id="${p.id}" data-title="${safeTitle}" data-seller="${safeSellerName}" aria-label="Add ${safeTitle} to Wishlist" class="flex items-center justify-center px-3 py-2 border border-indigo-600 text-indigo-600 dark:text-indigo-400 dark:border-indigo-400 text-sm font-medium rounded-md hover:bg-indigo-50 dark:hover:bg-gray-700 transition-colors duration-200">
                                     <i class="far fa-heart mr-2 pointer-events-none"></i> Wishlist
                                 </button>
-                                <button data-action="contact" data-seller="${safeSellerName}" class="flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 dark:hover:bg-gray-700">
+                                <button data-action="contact" data-seller="${safeSellerName}" aria-label="Contact seller of ${safeTitle}" class="flex items-center justify-center px-3 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
                                     <i class="far fa-envelope mr-2 pointer-events-none"></i> Contact
                                 </button>
                             </div>
-                            <button data-action="buy" data-title="${safeTitle}" class="w-full flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700">
+                            <button data-action="buy" data-title="${safeTitle}" aria-label="Buy ${safeTitle} now" class="w-full flex items-center justify-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 transition-colors duration-200">
                                 <i class="fas fa-shopping-cart mr-2 pointer-events-none"></i> Buy Now
                             </button>
                         </div>
@@ -175,15 +176,33 @@ const initHome = async () => {
         e.preventDefault();
         e.stopPropagation();
 
-        if (action === 'wishlist') {
-            const { id, title, seller } = button.dataset;
-            await addToWishlistHandler(id, title, seller);
-        } else if (action === 'contact') {
-            const { seller } = button.dataset;
-            alert(`Demo: Contacting seller ${seller}...`);
-        } else if (action === 'buy') {
-            const { title } = button.dataset;
-            alert(`Demo: Starting purchase for ${title}...`);
+        // UI Feedback
+        const originalContent = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+
+        try {
+            if (action === 'wishlist') {
+                const { id, title, seller } = button.dataset;
+                await addToWishlistHandler(id, title, seller);
+            } else if (action === 'contact') {
+                const { seller } = button.dataset;
+                // Simulate delay for demo
+                await new Promise(r => setTimeout(r, 600));
+                showToast(`Demo: Contacting seller ${seller}...`, 'info');
+            } else if (action === 'buy') {
+                const { title } = button.dataset;
+                await new Promise(r => setTimeout(r, 800));
+                showToast(`Demo: Starting purchase for ${title}...`, 'success');
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            // Restore button state
+            setTimeout(() => {
+                button.disabled = false;
+                button.innerHTML = originalContent;
+            }, 500);
         }
     });
 
@@ -191,19 +210,22 @@ const initHome = async () => {
     const addToWishlistHandler = async (id, title, sellerName) => {
         // Check if demo product
         if (id.toString().startsWith('demo') || isNaN(id)) {
-            alert(`Demo: Added ${title} to your Wishlist!`);
+            await new Promise(r => setTimeout(r, 500));
+            showToast(`Demo: Added ${title} to your Wishlist!`, 'success');
             return;
         }
 
         // Real product logic
         try {
             await apiRequest('/wishlist', 'POST', { productId: id });
-            alert(`Success: Added ${title} to your Wishlist!`);
+            showToast(`Success: Added ${title} to your Wishlist!`, 'success');
         } catch (error) {
             // apiRequest handles general alert, but we can customize if needed
             if (error.message.includes('token')) {
-                alert('Please login to add items to your wishlist.');
-                window.location.hash = '/login';
+                showToast('Please login to add items to your wishlist.', 'error');
+                setTimeout(() => {
+                    window.location.hash = '/login';
+                }, 1500);
             }
         }
     };

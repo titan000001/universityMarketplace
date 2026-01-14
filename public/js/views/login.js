@@ -25,13 +25,22 @@ const loginView = () => `
 const initLogin = () => {
     document.getElementById('login-form').addEventListener('submit', async e => {
         e.preventDefault();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
         try {
             const result = await apiRequest('/login', 'POST', data);
             localStorage.setItem('token', result.token);
             navigate('/');
-        } catch (error) { /* alert is handled in apiRequest */ }
+        } catch (error) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
     });
 };
 

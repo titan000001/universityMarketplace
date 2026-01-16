@@ -14,7 +14,9 @@ const loginView = () => `
                 <label for="password" class="block text-gray-700 dark:text-gray-300">Password</label>
                 <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
             </div>
-            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Login</button>
+            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-all flex justify-center items-center gap-2">
+                <span>Login</span>
+            </button>
             <p class="text-center mt-4 dark:text-gray-400">
                 Don't have an account? <a href="#/register" class="text-indigo-600 dark:text-indigo-400 hover:underline">Register here</a>.
             </p>
@@ -25,13 +27,27 @@ const loginView = () => `
 const initLogin = () => {
     document.getElementById('login-form').addEventListener('submit', async e => {
         e.preventDefault();
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalContent = btn.innerHTML;
+
+        // UX: Show loading state
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Logging in...</span>';
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
+
         try {
             const result = await apiRequest('/login', 'POST', data);
             localStorage.setItem('token', result.token);
             navigate('/');
-        } catch (error) { /* alert is handled in apiRequest */ }
+        } catch (error) {
+            // UX: Restore button state on error
+            btn.disabled = false;
+            btn.innerHTML = originalContent;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        }
     });
 };
 

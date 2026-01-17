@@ -14,3 +14,7 @@
 ## 2024-05-23 - Alert vs Toast
 **Learning:** The application uses a mix of `showToast` and relying on `apiRequest` error handling. Some interactions have no visual feedback other than the UI updating.
 **Action:** Standardize on `showToast` for success/error messages to provide consistent non-blocking feedback, especially for screen reader users (if implemented with `role="status"`).
+
+## 2026-01-17 - Chat Accessibility Polish
+**Learning:** Icon-only buttons (like send icons) are invisible to screen readers without an `aria-label`. Adding `aria-label` and hiding the icon with `aria-hidden="true"` is essential.
+**Action:** When using FontAwesome icons as buttons, always wrap them in a semantic `<button>` tag with an accessible name.

@@ -24,7 +24,7 @@ const initCart = () => {
                     <p class="text-gray-600 dark:text-gray-300">$${item.price}</p>
                     <p class="text-sm text-gray-500 dark:text-gray-400">Sold by: ${item.sellerName}</p>
                 </div>
-                <button data-id="${item.id}" class="remove-from-cart-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Remove</button>
+                <button data-id="${item.id}" aria-label="Remove ${item.title.replace(/"/g, '&quot;')} from cart" class="remove-from-cart-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Remove</button>
             </div>
         `).join('');
 

@@ -14,3 +14,7 @@
 ## 2024-05-23 - Alert vs Toast
 **Learning:** The application uses a mix of `showToast` and relying on `apiRequest` error handling. Some interactions have no visual feedback other than the UI updating.
 **Action:** Standardize on `showToast` for success/error messages to provide consistent non-blocking feedback, especially for screen reader users (if implemented with `role="status"`).
+
+## 2026-01-02 - Real-time Content Accessibility
+**Learning:** For dynamic content like chat logs or status updates, simply appending HTML isn't enough for screen readers. They require `role="log"` or `role="status"` with `aria-live="polite"` to announce updates without stealing focus.
+**Action:** Always wrap real-time data containers with appropriate ARIA live regions.

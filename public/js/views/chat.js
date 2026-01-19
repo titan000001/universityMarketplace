@@ -8,20 +8,20 @@ const chatView = () => `
         <!-- Header -->
         <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
             <h2 class="text-xl font-bold"><i class="fas fa-comments mr-2"></i>Chat with Seller</h2>
-            <span id="connection-status" class="text-xs bg-indigo-500 px-2 py-1 rounded-full">Connecting...</span>
+            <span id="connection-status" class="text-xs bg-indigo-500 px-2 py-1 rounded-full" role="status" aria-live="polite">Connecting...</span>
         </div>
         
         <!-- Messages Area -->
-        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-700">
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-700" role="log" aria-live="polite" aria-atomic="false">
             <!-- Messages will appear here -->
             <div class="text-center text-gray-500 text-sm mt-4">Start of conversation</div>
         </div>
 
         <!-- Input Area -->
         <form id="chat-form" class="p-4 bg-white dark:bg-gray-800 flex gap-2">
-            <input type="text" id="message-input" class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type a message..." required autocomplete="off">
-            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors">
-                <i class="fas fa-paper-plane"></i>
+            <input type="text" id="message-input" class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type a message..." required autocomplete="off" aria-label="Type your message">
+            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors" aria-label="Send message">
+                <i class="fas fa-paper-plane" aria-hidden="true"></i>
             </button>
         </form>
     </div>

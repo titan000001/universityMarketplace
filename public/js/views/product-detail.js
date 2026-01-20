@@ -221,37 +221,17 @@ const initProductDetail = async (param) => {
         const wishlistBtn = document.getElementById('wishlist-btn');
         if (wishlistBtn) {
             wishlistBtn.addEventListener('click', async () => {
-                // Prevent double clicks
-                if (wishlistBtn.disabled) return;
-
-                const originalContent = wishlistBtn.innerHTML;
-                const originalClasses = wishlistBtn.className;
-
-                // Set loading state
-                wishlistBtn.disabled = true;
-                wishlistBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Processing...`;
-                wishlistBtn.classList.remove('bg-red-500', 'hover:bg-red-600', 'bg-green-500', 'hover:bg-green-600');
-                wishlistBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
-
                 try {
-                    let action = '';
+                    setLoading(wishlistBtn, true, isWishlisted ? 'Removing...' : 'Adding...');
                     if (isWishlisted) {
                         await apiRequest(`/wishlist/${product.id}`, 'DELETE');
-                        action = 'removed';
                     } else {
                         await apiRequest('/wishlist', 'POST', { productId: product.id });
-                        action = 'added';
                     }
-
-                    showToast(`Product ${action} to wishlist`, 'success');
-                    updateNav(); // Update navbar count
-                    initProductDetail(param);
-
+                    updateNav(); // Update the wishlist count in navbar
+                    initProductDetail(param); // Re-render the view to update the button
                 } catch (error) {
-                    // Reset on error
-                    wishlistBtn.disabled = false;
-                    wishlistBtn.innerHTML = originalContent;
-                    wishlistBtn.className = originalClasses;
+                    setLoading(wishlistBtn, false);
                 }
             });
         }

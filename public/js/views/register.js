@@ -48,12 +48,12 @@ const initRegister = () => {
     const form = document.getElementById('register-form');
     form.addEventListener('submit', async e => {
         e.preventDefault();
-        const submitBtn = form.querySelector('button[type="submit"]');
-        setLoading(submitBtn, true);
-
+        const submitBtn = e.target.querySelector('button[type="submit"]');
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
+
         try {
+            setLoading(submitBtn, true, 'Registering...');
             await apiRequest('/register', 'POST', data);
             showToast('Registration successful! Please log in.', 'success');
             navigate('/login');

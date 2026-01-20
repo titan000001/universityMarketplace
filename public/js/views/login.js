@@ -27,12 +27,12 @@ const initLogin = () => {
     const form = document.getElementById('login-form');
     form.addEventListener('submit', async e => {
         e.preventDefault();
-        const submitBtn = form.querySelector('button[type="submit"]');
-        setLoading(submitBtn, true);
-
+        const submitBtn = e.target.querySelector('button[type="submit"]');
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
+
         try {
+            setLoading(submitBtn, true, 'Logging in...');
             const result = await apiRequest('/login', 'POST', data);
             localStorage.setItem('token', result.token);
             navigate('/');

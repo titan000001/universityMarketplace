@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Palette's Journal - Critical Learnings
 
 ## 2026-01-02 - Search Experience & Accessibility
@@ -30,3 +31,8 @@
 ## 2026-01-02 - Real-time Content Accessibility
 **Learning:** For dynamic content like chat logs or status updates, simply appending HTML isn't enough for screen readers. They require `role="log"` or `role="status"` with `aria-live="polite"` to announce updates without stealing focus.
 **Action:** Always wrap real-time data containers with appropriate ARIA live regions.
+=======
+## 2024-01-01 - Async Feedback Patterns
+**Learning:** Users often double-click buttons (like "Register" or "Login") when there's no immediate visual feedback during async operations, leading to multiple submissions or frustration.
+**Action:** Always implement a `setLoading` state for buttons that trigger network requests, disabling the button and showing a spinner to indicate progress and prevent duplicate actions.
+>>>>>>> origin/palette-loading-state-4136543047823190494

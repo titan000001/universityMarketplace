@@ -8,11 +8,11 @@ const chatView = () => `
         <!-- Header -->
         <div class="bg-indigo-600 p-4 text-white flex justify-between items-center">
             <h2 class="text-xl font-bold"><i class="fas fa-comments mr-2"></i>Chat with Seller</h2>
-            <span id="connection-status" class="text-xs bg-indigo-500 px-2 py-1 rounded-full">Connecting...</span>
+            <span id="connection-status" class="text-xs bg-indigo-500 px-2 py-1 rounded-full" role="status" aria-live="polite">Connecting...</span>
         </div>
         
         <!-- Messages Area -->
-        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-700">
+        <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50 dark:bg-gray-900 border-b dark:border-gray-700" role="log" aria-live="polite" aria-atomic="false">
             <!-- Messages will appear here -->
             <div class="text-center text-gray-500 text-sm mt-4">Start of conversation</div>
         </div>

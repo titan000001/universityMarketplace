@@ -26,3 +26,7 @@
 ## 2026-01-17 - Chat Accessibility Polish
 **Learning:** Icon-only buttons (like send icons) are invisible to screen readers without an `aria-label`. Adding `aria-label` and hiding the icon with `aria-hidden="true"` is essential.
 **Action:** When using FontAwesome icons as buttons, always wrap them in a semantic `<button>` tag with an accessible name.
+
+## 2026-01-02 - Real-time Content Accessibility
+**Learning:** For dynamic content like chat logs or status updates, simply appending HTML isn't enough for screen readers. They require `role="log"` or `role="status"` with `aria-live="polite"` to announce updates without stealing focus.
+**Action:** Always wrap real-time data containers with appropriate ARIA live regions.

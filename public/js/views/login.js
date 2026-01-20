@@ -27,10 +27,19 @@ const initLogin = () => {
     const form = document.getElementById('login-form');
     form.addEventListener('submit', async e => {
         e.preventDefault();
+<<<<<<< HEAD
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
 
+=======
+        const button = e.target.querySelector('button[type="submit"]');
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+
+        setLoading(button, true, 'Logging in...');
+
+>>>>>>> origin/palette-loading-state-8950687335011416181
         try {
             setLoading(submitBtn, true, 'Logging in...');
             const result = await apiRequest('/login', 'POST', data);
@@ -42,7 +51,6 @@ const initLogin = () => {
             setLoading(submitBtn, false);
         }
     });
-});
 };
 
 export { loginView, initLogin };

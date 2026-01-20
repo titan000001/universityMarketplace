@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * Manages the loading state of a button element.
  *

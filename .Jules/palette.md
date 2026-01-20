@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Palette's Journal - Critical Learnings
 
 ## 2026-01-02 - Search Experience & Accessibility
@@ -35,4 +36,7 @@
 ## 2024-01-01 - Async Feedback Patterns
 **Learning:** Users often double-click buttons (like "Register" or "Login") when there's no immediate visual feedback during async operations, leading to multiple submissions or frustration.
 **Action:** Always implement a `setLoading` state for buttons that trigger network requests, disabling the button and showing a spinner to indicate progress and prevent duplicate actions.
->>>>>>> origin/palette-loading-state-4136543047823190494
+
+## 2025-05-18 - [Add Loading States for Auth Actions]
+**Learning:** Users lack feedback during async authentication requests (login/register), leading to potential double-submissions and uncertainty.
+**Action:** Implemented a reusable `setLoading` utility that toggles button state and displays a spinner. This pattern should be applied to all future async form submissions (e.g., checkout, product creation) to maintain consistency and "smoothness".

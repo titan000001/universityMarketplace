@@ -17,16 +17,18 @@ const initCart = () => {
     const cartItemsContainer = document.getElementById('cart-items');
 
     if (cart.length > 0) {
-        cartItemsContainer.innerHTML = cart.map(item => `
+        cartItemsContainer.innerHTML = cart.map(item => {
+            const safeTitle = item.title.replace(/"/g, '&quot;');
+            return `
             <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex items-center justify-between transition-colors duration-200">
                 <div>
                     <h3 class="font-bold text-lg dark:text-white">${item.title}</h3>
                     <p class="text-gray-600 dark:text-gray-300">$${item.price}</p>
                     <p class="text-sm text-gray-500 dark:text-gray-400">Sold by: ${item.sellerName}</p>
                 </div>
-                <button data-id="${item.id}" aria-label="Remove ${item.title.replace(/"/g, '&quot;')} from cart" class="remove-from-cart-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Remove</button>
+                <button data-id="${item.id}" aria-label="Remove ${safeTitle} from cart" class="remove-from-cart-btn bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Remove</button>
             </div>
-        `).join('');
+        `}).join('');
 
         // Checkout Button Container
         const checkoutBtnContainer = document.createElement('div');

@@ -63,6 +63,7 @@ const initRegister = () => {
             setLoading(submitBtn, false);
         }
     });
+});
 };
 
 export { registerView, initRegister };

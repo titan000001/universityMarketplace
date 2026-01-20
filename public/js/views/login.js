@@ -42,6 +42,7 @@ const initLogin = () => {
             setLoading(submitBtn, false);
         }
     });
+});
 };
 
 export { loginView, initLogin };

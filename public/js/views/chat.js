@@ -19,8 +19,8 @@ const chatView = () => `
 
         <!-- Input Area -->
         <form id="chat-form" class="p-4 bg-white dark:bg-gray-800 flex gap-2">
-            <input type="text" id="message-input" class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type a message..." required autocomplete="off">
-            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors">
+            <input type="text" id="message-input" aria-label="Message to send" class="flex-1 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Type a message..." required autocomplete="off">
+            <button type="submit" aria-label="Send message" class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </form>

@@ -46,13 +46,23 @@ const registerView = () => `
 const initRegister = () => {
     document.getElementById('register-form').addEventListener('submit', async e => {
         e.preventDefault();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalContent = submitBtn.innerHTML;
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
         try {
             await apiRequest('/register', 'POST', data);
             showToast('Registration successful! Please log in.', 'success');
             navigate('/login');
-        } catch (error) { /* toast is handled in apiRequest */ }
+        } catch (error) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalContent;
+            /* toast is handled in apiRequest */
+        }
     });
 };
 

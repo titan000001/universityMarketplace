@@ -15,7 +15,9 @@ const loginView = () => `
                 <label for="password" class="block text-gray-700 dark:text-gray-300">Password</label>
                 <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
             </div>
-            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Login</button>
+            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-all flex justify-center items-center gap-2">
+                <span>Login</span>
+            </button>
             <p class="text-center mt-4 dark:text-gray-400">
                 Don't have an account? <a href="#/register" class="text-indigo-600 dark:text-indigo-400 hover:underline">Register here</a>.
             </p>
@@ -27,28 +29,25 @@ const initLogin = () => {
     const form = document.getElementById('login-form');
     form.addEventListener('submit', async e => {
         e.preventDefault();
-<<<<<<< HEAD
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
-
-=======
-        const button = e.target.querySelector('button[type="submit"]');
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData.entries());
-
-        setLoading(button, true, 'Logging in...');
-
->>>>>>> origin/palette-loading-state-8950687335011416181
         try {
             setLoading(submitBtn, true, 'Logging in...');
             const result = await apiRequest('/login', 'POST', data);
             localStorage.setItem('token', result.token);
             navigate('/');
         } catch (error) {
+<<<<<<< HEAD
             /* alert is handled in apiRequest */
         } finally {
             setLoading(submitBtn, false);
+=======
+            // UX: Restore button state on error
+            btn.disabled = false;
+            btn.innerHTML = originalContent;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+>>>>>>> origin/palette-login-ux-improvement-7318362000092013211
         }
     });
 };

@@ -2,6 +2,7 @@
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
 import { showToast } from '../utils/toast.js';
+import { setLoading } from '../utils/loading.js';
 
 const sellView = () => `
     <div class="max-w-lg mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transition-colors duration-200">
@@ -87,8 +88,12 @@ const initSell = async () => {
         }
     } catch (err) { console.error('Error fetching shops:', err); }
 
-    document.getElementById('sell-form').addEventListener('submit', async e => {
+    const form = document.getElementById('sell-form');
+    form.addEventListener('submit', async e => {
         e.preventDefault();
+        const submitBtn = form.querySelector('button[type="submit"]');
+        setLoading(submitBtn, true);
+
         const formData = new FormData(e.target);
 
         // Handle categories
@@ -113,7 +118,11 @@ const initSell = async () => {
             await apiRequest('/products', 'POST', formData);
             alert('Item listed successfully!');
             navigate('/profile');
-        } catch (error) { /* alert is handled in apiRequest */ }
+        } catch (error) {
+            /* alert is handled in apiRequest */
+        } finally {
+            setLoading(submitBtn, false);
+        }
     });
 };
 

@@ -2,6 +2,7 @@
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
 import { showToast } from '../utils/toast.js';
+import { setLoading } from '../utils/loading.js';
 
 const registerView = () => `
     <div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transition-colors duration-200">
@@ -44,13 +45,11 @@ const registerView = () => `
 `;
 
 const initRegister = () => {
-    document.getElementById('register-form').addEventListener('submit', async e => {
+    const form = document.getElementById('register-form');
+    form.addEventListener('submit', async e => {
         e.preventDefault();
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        const originalContent = submitBtn.innerHTML;
-
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+        const submitBtn = form.querySelector('button[type="submit"]');
+        setLoading(submitBtn, true);
 
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
@@ -59,9 +58,9 @@ const initRegister = () => {
             showToast('Registration successful! Please log in.', 'success');
             navigate('/login');
         } catch (error) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalContent;
             /* toast is handled in apiRequest */
+        } finally {
+            setLoading(submitBtn, false);
         }
     });
 };

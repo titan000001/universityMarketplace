@@ -1,6 +1,7 @@
 // public/js/views/login.js
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
+import { setLoading } from '../utils/loading.js';
 
 const loginView = () => `
     <div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transition-colors duration-200">
@@ -23,13 +24,11 @@ const loginView = () => `
 `;
 
 const initLogin = () => {
-    document.getElementById('login-form').addEventListener('submit', async e => {
+    const form = document.getElementById('login-form');
+    form.addEventListener('submit', async e => {
         e.preventDefault();
-        const submitBtn = e.target.querySelector('button[type="submit"]');
-        const originalContent = submitBtn.innerHTML;
-
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        const submitBtn = form.querySelector('button[type="submit"]');
+        setLoading(submitBtn, true);
 
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
@@ -38,9 +37,9 @@ const initLogin = () => {
             localStorage.setItem('token', result.token);
             navigate('/');
         } catch (error) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalContent;
             /* alert is handled in apiRequest */
+        } finally {
+            setLoading(submitBtn, false);
         }
     });
 };

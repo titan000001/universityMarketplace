@@ -1,0 +1,91 @@
+
+> university-student-marketplace@1.0.0 start /app
+> node server.js
+
+✅  Server is running on http://localhost:3000
+❌  MySQL Connection failed:
+⚠️  Switching to MOCK MODE. Data will be served from local fallbacks.
+⚠️  Serving MOCK LOGIN
+⚠️  Serving MOCK PRODUCTS
+⚠️  Serving MOCK CATEGORIES
+⚠️  Serving MOCK LOGIN
+⚠️  Serving MOCK PRODUCTS
+⚠️  Serving MOCK CATEGORIES
+⚠️  Serving MOCK PRODUCTS
+⚠️  Serving MOCK CATEGORIES
+⚠️  Serving MOCK PRODUCTS
+⚠️  Serving MOCK CATEGORIES
+⚠️  Serving MOCK PRODUCT DETAIL
+Get Comments Error: Error
+    at PromisePool.query (/app/node_modules/.pnpm/mysql2@3.16.0/node_modules/mysql2/lib/promise/pool.js:36:22)
+    at getCommentsForProduct (/app/controllers/commentController.js:7:37)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at /app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:284:15
+    at param (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:365:14)
+    at param (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:376:14)
+    at Function.process_params (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:421:3) {
+  code: 'ECONNREFUSED',
+  errno: undefined,
+  sql: undefined,
+  sqlState: undefined,
+  sqlMessage: undefined
+}
+⚠️  Serving MOCK PRODUCT DETAIL
+Get Comments Error: Error
+    at PromisePool.query (/app/node_modules/.pnpm/mysql2@3.16.0/node_modules/mysql2/lib/promise/pool.js:36:22)
+    at getCommentsForProduct (/app/controllers/commentController.js:7:37)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at /app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:284:15
+    at param (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:365:14)
+    at param (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:376:14)
+    at Function.process_params (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:421:3) {
+  code: 'ECONNREFUSED',
+  errno: undefined,
+  sql: undefined,
+  sqlState: undefined,
+  sqlMessage: undefined
+}
+⚠️  Serving MOCK PRODUCTS
+⚠️  Serving MOCK CATEGORIES
+⚠️  Serving MOCK PRODUCT DETAIL
+Get Comments Error: Error
+    at PromisePool.query (/app/node_modules/.pnpm/mysql2@3.16.0/node_modules/mysql2/lib/promise/pool.js:36:22)
+    at getCommentsForProduct (/app/controllers/commentController.js:7:37)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at /app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:284:15
+    at param (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:365:14)
+    at param (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:376:14)
+    at Function.process_params (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:421:3) {
+  code: 'ECONNREFUSED',
+  errno: undefined,
+  sql: undefined,
+  sqlState: undefined,
+  sqlMessage: undefined
+}
+⚠️  Serving MOCK PRODUCT DETAIL
+Get Comments Error: Error
+    at PromisePool.query (/app/node_modules/.pnpm/mysql2@3.16.0/node_modules/mysql2/lib/promise/pool.js:36:22)
+    at getCommentsForProduct (/app/controllers/commentController.js:7:37)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at next (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:149:13)
+    at Route.dispatch (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/route.js:119:3)
+    at Layer.handle [as handle_request] (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/layer.js:95:5)
+    at /app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:284:15
+    at param (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:365:14)
+    at param (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:376:14)
+    at Function.process_params (/app/node_modules/.pnpm/express@4.22.1/node_modules/express/lib/router/index.js:421:3) {
+  code: 'ECONNREFUSED',
+  errno: undefined,
+  sql: undefined,
+  sqlState: undefined,
+  sqlMessage: undefined
+}

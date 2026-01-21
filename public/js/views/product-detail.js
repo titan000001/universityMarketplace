@@ -46,7 +46,7 @@ const initProductDetail = async (param) => {
         const [product, wishlist, comments] = await Promise.all([
             apiRequest(`/products/${param}`),
             localStorage.getItem('token') ? apiRequest('/wishlist').catch(() => []) : Promise.resolve([]),
-            apiRequest(`/comments/${param}`)
+            apiRequest(`/comments/${param}`).catch(() => [])
         ]);
 
         const detailContent = document.getElementById('product-detail-content');
@@ -239,11 +239,7 @@ const initProductDetail = async (param) => {
         const cartBtn = document.getElementById('cart-btn');
         if (cartBtn) {
             cartBtn.addEventListener('click', () => {
-                const originalContent = cartBtn.innerHTML;
-
-                // Visual feedback even for sync actions feels better
-                cartBtn.innerHTML = `<i class="fas fa-check"></i> Updating...`;
-                cartBtn.disabled = true;
+                setLoading(cartBtn, true, 'Updating...');
 
                 setTimeout(() => {
                     if (isInCart) {

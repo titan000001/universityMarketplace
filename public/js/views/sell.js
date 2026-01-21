@@ -116,7 +116,7 @@ const initSell = async () => {
 
         try {
             await apiRequest('/products', 'POST', formData);
-            alert('Item listed successfully!');
+            showToast('Item listed successfully!', 'success');
             navigate('/profile');
         } catch (error) {
             /* alert is handled in apiRequest */

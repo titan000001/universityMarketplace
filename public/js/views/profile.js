@@ -1,6 +1,7 @@
 // public/js/views/profile.js
 import { apiRequest } from '../services/api.js';
 import { showToast } from '../utils/toast.js';
+import { setLoading } from '../utils/loading.js';
 
 const profileView = () => `
     <div id="profile-content" class="max-w-4xl mx-auto">
@@ -34,9 +35,9 @@ const initProfile = async (param) => {
                         ${user.bio ? `<p class="text-gray-600 dark:text-gray-300 mb-4 max-w-2xl">${user.bio}</p>` : '<p class="text-gray-400 italic mb-4">No bio provided.</p>'}
                         
                         <div class="flex justify-center md:justify-start space-x-4 mb-4">
-                            ${socialLinks.linkedin ? `<a href="${socialLinks.linkedin}" target="_blank" class="text-blue-600 hover:text-blue-800 text-2xl"><i class="fab fa-linkedin"></i></a>` : ''}
-                            ${socialLinks.github ? `<a href="${socialLinks.github}" target="_blank" class="text-gray-800 dark:text-gray-200 hover:text-black text-2xl"><i class="fab fa-github"></i></a>` : ''}
-                            ${socialLinks.website ? `<a href="${socialLinks.website}" target="_blank" class="text-green-600 hover:text-green-800 text-2xl"><i class="fas fa-globe"></i></a>` : ''}
+                            ${socialLinks.linkedin ? `<a href="${socialLinks.linkedin}" target="_blank" aria-label="LinkedIn Profile" class="text-blue-600 hover:text-blue-800 text-2xl"><i class="fab fa-linkedin"></i></a>` : ''}
+                            ${socialLinks.github ? `<a href="${socialLinks.github}" target="_blank" aria-label="GitHub Profile" class="text-gray-800 dark:text-gray-200 hover:text-black text-2xl"><i class="fab fa-github"></i></a>` : ''}
+                            ${socialLinks.website ? `<a href="${socialLinks.website}" target="_blank" aria-label="Personal Website" class="text-green-600 hover:text-green-800 text-2xl"><i class="fas fa-globe"></i></a>` : ''}
                         </div>
                     </div>
                     ${isOwner ? `
@@ -112,6 +113,9 @@ const initProfile = async (param) => {
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                const submitBtn = form.querySelector('button[type="submit"]');
+                setLoading(submitBtn, true, 'Saving...');
+
                 const formData = new FormData(e.target);
 
                 // Construct social links JSON
@@ -135,6 +139,7 @@ const initProfile = async (param) => {
                 } catch (error) {
                     console.error(error);
                     showToast('Failed to update profile.', 'error');
+                    setLoading(submitBtn, false);
                 }
             });
         }

@@ -38,16 +38,9 @@ const initLogin = () => {
             localStorage.setItem('token', result.token);
             navigate('/');
         } catch (error) {
-<<<<<<< HEAD
             /* alert is handled in apiRequest */
         } finally {
             setLoading(submitBtn, false);
-=======
-            // UX: Restore button state on error
-            btn.disabled = false;
-            btn.innerHTML = originalContent;
-            btn.classList.remove('opacity-75', 'cursor-not-allowed');
->>>>>>> origin/palette-login-ux-improvement-7318362000092013211
         }
     });
 };

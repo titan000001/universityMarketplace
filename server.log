@@ -1,0 +1,9 @@
+
+> university-student-marketplace@1.0.0 start /app
+> node server.js
+
+✅  Server is running on http://localhost:3000
+❌  MySQL Connection failed:
+⚠️  Switching to MOCK MODE. Data will be served from local fallbacks.
+⚠️  Serving MOCK PRODUCTS
+⚠️  Serving MOCK PRODUCTS

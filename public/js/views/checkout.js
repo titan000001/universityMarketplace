@@ -3,6 +3,7 @@ import { getCart, clearCart } from '../services/cart.js';
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
 import { showToast } from '../utils/toast.js';
+import { setLoading } from '../utils/loading.js';
 
 const checkoutView = () => `
     <div class="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md transition-colors duration-200">
@@ -68,14 +69,9 @@ const initCheckout = () => {
     // Confirm Order
     const confirmBtn = document.getElementById('confirm-order-btn');
     confirmBtn.addEventListener('click', async () => {
-        const originalContent = confirmBtn.innerHTML;
-
-        // Add loading state
-        confirmBtn.disabled = true;
-        confirmBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Processing Order...`;
-        confirmBtn.classList.add('cursor-not-allowed', 'opacity-75');
-
         try {
+            setLoading(confirmBtn, true, 'Processing Order...');
+
             const items = cart.map(item => ({ id: item.id, price: item.price }));
             const response = await apiRequest('/orders', 'POST', { items });
 
@@ -87,10 +83,7 @@ const initCheckout = () => {
             navigate('/');
         } catch (error) {
             console.error(error);
-            // Re-enable on error
-            confirmBtn.disabled = false;
-            confirmBtn.innerHTML = originalContent;
-            confirmBtn.classList.remove('cursor-not-allowed', 'opacity-75');
+            setLoading(confirmBtn, false);
         }
     });
 

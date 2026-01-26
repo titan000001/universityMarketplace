@@ -40,3 +40,7 @@
 ## 2025-05-18 - [Add Loading States for Auth Actions]
 **Learning:** Users lack feedback during async authentication requests (login/register), leading to potential double-submissions and uncertainty.
 **Action:** Implemented a reusable `setLoading` utility that toggles button state and displays a spinner. This pattern should be applied to all future async form submissions (e.g., checkout, product creation) to maintain consistency and "smoothness".
+
+## 2025-10-27 - Manual Implementations vs Utilities
+**Learning:** Manual implementations of common UI patterns (like loading states) often miss subtle accessibility attributes (like `aria-busy`) that centralized utilities handle correctly.
+**Action:** Always refactor manual UI logic to use established utilities to ensure accessibility compliance across the board.

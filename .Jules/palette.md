@@ -40,3 +40,7 @@
 ## 2025-05-18 - [Add Loading States for Auth Actions]
 **Learning:** Users lack feedback during async authentication requests (login/register), leading to potential double-submissions and uncertainty.
 **Action:** Implemented a reusable `setLoading` utility that toggles button state and displays a spinner. This pattern should be applied to all future async form submissions (e.g., checkout, product creation) to maintain consistency and "smoothness".
+
+## 2026-01-27 - Empty State Patterns
+**Learning:** Empty states are often neglected but offer a prime opportunity to guide users back to the "happy path". A simple text message is discouraging; an illustration + CTA button transforms a dead end into a navigational aid.
+**Action:** When implementing list views (cart, orders, wishlist), always include a rich empty state with a clear call-to-action.

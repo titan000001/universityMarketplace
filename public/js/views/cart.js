@@ -50,7 +50,18 @@ const initCart = () => {
         });
 
     } else {
-        cartItemsContainer.innerHTML = '<p class="text-center dark:text-white">Your cart is empty.</p>';
+        cartItemsContainer.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-12 animate__animated animate__fadeIn">
+                <img src="/images/empty-state.png" alt="" class="w-48 h-auto mb-6 opacity-75" aria-hidden="true">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Your cart is empty</h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-8 max-w-sm mx-auto">
+                    Looks like you haven't added anything to your cart yet.
+                </p>
+                <a href="#/" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:-translate-y-1">
+                    <i class="fas fa-shopping-basket mr-2"></i> Start Shopping
+                </a>
+            </div>
+        `;
     }
 };
 

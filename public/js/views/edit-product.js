@@ -2,6 +2,7 @@
 import { apiRequest } from '../services/api.js';
 import { navigate } from '../router.js';
 import { showToast } from '../utils/toast.js';
+import { setLoading } from '../utils/loading.js';
 
 const editProductView = () => `
     <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
@@ -58,6 +59,9 @@ const initEditProduct = async (param) => {
 
         document.getElementById('edit-product-form').addEventListener('submit', async e => {
             e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            setLoading(submitBtn, true, 'Updating...');
+
             const formData = new FormData(e.target);
             const checkedCategories = Array.from(document.querySelectorAll('input[name="categories"]:checked'))
                                            .map(cb => cb.value);
@@ -68,9 +72,13 @@ const initEditProduct = async (param) => {
 
             try {
                 await apiRequest(`/products/${product.id}`, 'PUT', formData);
-                alert('Item updated successfully!');
+                showToast('Item updated successfully!', 'success');
                 navigate('/profile');
-            } catch (error) { /* alert is handled in apiRequest */ }
+            } catch (error) {
+                /* alert is handled in apiRequest */
+            } finally {
+                setLoading(submitBtn, false);
+            }
         });
     } catch (error) {
         document.getElementById('main-content').innerHTML = `<p class="text-center text-red-500">Could not find this product.</p>`;

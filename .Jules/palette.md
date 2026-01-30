@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 # Palette's Journal - Critical Learnings
 
 ## 2026-01-02 - Search Experience & Accessibility
@@ -13,9 +11,9 @@
 **Learning:** Icon-only buttons (like "Send" or "Remove") are invisible to screen readers without an `aria-label`. Visually they are clear, but programmatically they are empty.
 **Action:** Always add `aria-label` to buttons that contain only icons.
 
-## 2025-02-18 - [Loading States for Async Forms]
-**Learning:** Users often double-submit forms or feel uncertain when there is no visual feedback during asynchronous operations (like login, registration, or posting comments). A simple loading spinner and disabled button state significantly improves perceived performance and prevents errors.
-**Action:** Implemented a reusable `setLoading` utility in `public/js/utils/loading.js` that disables the button, swaps the text for a spinner, and restores the original state. Applied this to Login, Register, Sell, and Product Detail (comments) forms. Future forms should use this utility by default.
+## 2025-05-18 - [Add Loading States for Auth Actions]
+**Learning:** Users lack feedback during async authentication requests (login/register), leading to potential double-submissions and uncertainty.
+**Action:** Implemented a reusable `setLoading` utility that toggles button state and displays a spinner. This pattern should be applied to all future async form submissions (e.g., checkout, product creation) to maintain consistency and "smoothness".
 
 ## 2024-05-23 - Accessibility Patterns in Vanilla JS SPAs
 **Learning:** This application manually re-renders views (`initProductDetail`) to update UI state (like button text) instead of using a reactive framework. This means any accessible states (like `aria-pressed`, `aria-busy`, or focus management) need to be manually preserved or re-applied after re-render, otherwise the user context is lost.
@@ -32,11 +30,7 @@
 ## 2026-01-02 - Real-time Content Accessibility
 **Learning:** For dynamic content like chat logs or status updates, simply appending HTML isn't enough for screen readers. They require `role="log"` or `role="status"` with `aria-live="polite"` to announce updates without stealing focus.
 **Action:** Always wrap real-time data containers with appropriate ARIA live regions.
-=======
-## 2024-01-01 - Async Feedback Patterns
-**Learning:** Users often double-click buttons (like "Register" or "Login") when there's no immediate visual feedback during async operations, leading to multiple submissions or frustration.
-**Action:** Always implement a `setLoading` state for buttons that trigger network requests, disabling the button and showing a spinner to indicate progress and prevent duplicate actions.
 
-## 2025-05-18 - [Add Loading States for Auth Actions]
-**Learning:** Users lack feedback during async authentication requests (login/register), leading to potential double-submissions and uncertainty.
-**Action:** Implemented a reusable `setLoading` utility that toggles button state and displays a spinner. This pattern should be applied to all future async form submissions (e.g., checkout, product creation) to maintain consistency and "smoothness".
+## 2025-05-28 - Unified Loading States
+**Learning:** Extending the `setLoading` utility to interactive buttons (like Wishlist/Cart) creates a unified experience across the platform, not just for forms.
+**Action:** Use `setLoading` for any user-initiated async action, ensuring visual feedback (spinner + text) is consistent.

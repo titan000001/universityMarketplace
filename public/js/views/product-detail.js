@@ -50,9 +50,9 @@ const initProductDetail = async (param) => {
         ]);
 
         const detailContent = document.getElementById('product-detail-content');
-        const isWishlisted = wishlist.some(item => item.id === product.id);
+        let isWishlisted = wishlist.some(item => item.id === product.id);
         const cart = getCart();
-        const isInCart = cart.some(item => item.id === product.id);
+        let isInCart = cart.some(item => item.id === product.id);
 
         // Price Analytics Logic
         let analyticsHtml = '';
@@ -225,12 +225,26 @@ const initProductDetail = async (param) => {
                     setLoading(wishlistBtn, true, isWishlisted ? 'Removing...' : 'Adding...');
                     if (isWishlisted) {
                         await apiRequest(`/wishlist/${product.id}`, 'DELETE');
+                        // Update UI manually
+                        isWishlisted = false;
+                        wishlistBtn.textContent = 'Add to Wishlist';
+                        wishlistBtn.classList.replace('bg-red-500', 'bg-green-500');
+                        wishlistBtn.classList.replace('hover:bg-red-600', 'hover:bg-green-600');
                     } else {
                         await apiRequest('/wishlist', 'POST', { productId: product.id });
+                        // Update UI manually
+                        isWishlisted = true;
+                        wishlistBtn.textContent = 'Remove from Wishlist';
+                        wishlistBtn.classList.replace('bg-green-500', 'bg-red-500');
+                        wishlistBtn.classList.replace('hover:bg-green-600', 'hover:bg-red-600');
                     }
                     updateNav(); // Update the wishlist count in navbar
-                    initProductDetail(param); // Re-render the view to update the button
+
+                    // Update originalContent so setLoading(false) restores the new state
+                    wishlistBtn.dataset.originalContent = wishlistBtn.innerHTML;
                 } catch (error) {
+                    // Error is handled, but we want to restore state
+                } finally {
                     setLoading(wishlistBtn, false);
                 }
             });
@@ -238,24 +252,33 @@ const initProductDetail = async (param) => {
 
         const cartBtn = document.getElementById('cart-btn');
         if (cartBtn) {
-            cartBtn.addEventListener('click', () => {
-                const originalContent = cartBtn.innerHTML;
+            cartBtn.addEventListener('click', async () => {
+                setLoading(cartBtn, true, 'Updating...');
 
-                // Visual feedback even for sync actions feels better
-                cartBtn.innerHTML = `<i class="fas fa-check"></i> Updating...`;
-                cartBtn.disabled = true;
+                await new Promise(r => setTimeout(r, 300));
 
-                setTimeout(() => {
-                    if (isInCart) {
-                        removeFromCart(product.id);
-                        showToast('Removed from cart', 'info');
-                    } else {
-                        addToCart(product);
-                        showToast('Added to cart', 'success');
-                    }
-                    updateNav();
-                    initProductDetail(param);
-                }, 300);
+                if (isInCart) {
+                    removeFromCart(product.id);
+                    showToast('Removed from cart', 'info');
+
+                    isInCart = false;
+                    cartBtn.textContent = 'Add to Cart';
+                    cartBtn.classList.replace('bg-yellow-500', 'bg-blue-500');
+                    cartBtn.classList.replace('hover:bg-yellow-600', 'hover:bg-blue-600');
+                } else {
+                    addToCart(product);
+                    showToast('Added to cart', 'success');
+
+                    isInCart = true;
+                    cartBtn.textContent = 'Remove from Cart';
+                    cartBtn.classList.replace('bg-blue-500', 'bg-yellow-500');
+                    cartBtn.classList.replace('hover:bg-blue-600', 'hover:bg-yellow-600');
+                }
+                updateNav();
+
+                // Update originalContent so setLoading(false) restores the new state
+                cartBtn.dataset.originalContent = cartBtn.innerHTML;
+                setLoading(cartBtn, false);
             });
         }
 

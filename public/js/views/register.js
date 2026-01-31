@@ -48,19 +48,10 @@ const initRegister = () => {
     const form = document.getElementById('register-form');
     form.addEventListener('submit', async e => {
         e.preventDefault();
-<<<<<<< HEAD
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
 
-=======
-        const button = e.target.querySelector('button[type="submit"]');
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData.entries());
-
-        setLoading(button, true, 'Registering...');
-
->>>>>>> origin/palette-loading-state-8950687335011416181
         try {
             setLoading(submitBtn, true, 'Registering...');
             await apiRequest('/register', 'POST', data);

@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 # Palette's Journal - Critical Learnings
 
 ## 2026-01-02 - Search Experience & Accessibility
@@ -32,11 +30,7 @@
 ## 2026-01-02 - Real-time Content Accessibility
 **Learning:** For dynamic content like chat logs or status updates, simply appending HTML isn't enough for screen readers. They require `role="log"` or `role="status"` with `aria-live="polite"` to announce updates without stealing focus.
 **Action:** Always wrap real-time data containers with appropriate ARIA live regions.
-=======
-## 2024-01-01 - Async Feedback Patterns
-**Learning:** Users often double-click buttons (like "Register" or "Login") when there's no immediate visual feedback during async operations, leading to multiple submissions or frustration.
-**Action:** Always implement a `setLoading` state for buttons that trigger network requests, disabling the button and showing a spinner to indicate progress and prevent duplicate actions.
 
-## 2025-05-18 - [Add Loading States for Auth Actions]
-**Learning:** Users lack feedback during async authentication requests (login/register), leading to potential double-submissions and uncertainty.
-**Action:** Implemented a reusable `setLoading` utility that toggles button state and displays a spinner. This pattern should be applied to all future async form submissions (e.g., checkout, product creation) to maintain consistency and "smoothness".
+## 2025-05-20 - Password Visibility Toggle Pattern
+**Learning:** Password inputs without visibility toggles are a significant usability barrier, especially on mobile or for complex passwords.
+**Action:** Use a standard pattern: wrap input in `relative` div, use `absolute inset-y-0 right-0` for the toggle button, and dynamically update `aria-label` and `type` attribute. Use `fa-eye` for "Show" and `fa-eye-slash` for "Hide".

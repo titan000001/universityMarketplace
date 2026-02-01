@@ -13,7 +13,12 @@ const loginView = () => `
             </div>
             <div class="mb-6">
                 <label for="password" class="block text-gray-700 dark:text-gray-300">Password</label>
-                <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                <div class="relative">
+                    <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white pr-10" required>
+                    <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200" aria-label="Show password">
+                        <i class="fas fa-eye" aria-hidden="true"></i>
+                    </button>
+                </div>
             </div>
             <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-all flex justify-center items-center gap-2">
                 <span>Login</span>
@@ -27,6 +32,28 @@ const loginView = () => `
 
 const initLogin = () => {
     const form = document.getElementById('login-form');
+
+    // Password Toggle Logic
+    const toggleBtn = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
+    if (toggleBtn && passwordInput) {
+        toggleBtn.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            const icon = toggleBtn.querySelector('i');
+            if (type === 'text') {
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+                toggleBtn.setAttribute('aria-label', 'Hide password');
+            } else {
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+                toggleBtn.setAttribute('aria-label', 'Show password');
+            }
+        });
+    }
+
     form.addEventListener('submit', async e => {
         e.preventDefault();
         const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -38,16 +65,9 @@ const initLogin = () => {
             localStorage.setItem('token', result.token);
             navigate('/');
         } catch (error) {
-<<<<<<< HEAD
             /* alert is handled in apiRequest */
         } finally {
             setLoading(submitBtn, false);
-=======
-            // UX: Restore button state on error
-            btn.disabled = false;
-            btn.innerHTML = originalContent;
-            btn.classList.remove('opacity-75', 'cursor-not-allowed');
->>>>>>> origin/palette-login-ux-improvement-7318362000092013211
         }
     });
 };

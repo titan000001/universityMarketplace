@@ -37,7 +37,12 @@ const registerView = () => `
             </div>
             <div class="mb-6">
                 <label for="password" class="block text-gray-700 dark:text-gray-300">Password</label>
-                <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                <div class="relative">
+                    <input type="password" id="password" name="password" class="w-full px-3 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white pr-10" required>
+                    <button type="button" id="toggle-password" aria-label="Show password" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
             </div>
             <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">Register</button>
         </form>
@@ -46,21 +51,30 @@ const registerView = () => `
 
 const initRegister = () => {
     const form = document.getElementById('register-form');
+
+    // Toggle Password Visibility
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const passwordInput = document.getElementById('password');
+
+    if (togglePasswordBtn && passwordInput) {
+        togglePasswordBtn.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            const icon = togglePasswordBtn.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+
+            togglePasswordBtn.setAttribute('aria-label', type === 'password' ? 'Show password' : 'Hide password');
+        });
+    }
+
     form.addEventListener('submit', async e => {
         e.preventDefault();
-<<<<<<< HEAD
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData.entries());
 
-=======
-        const button = e.target.querySelector('button[type="submit"]');
-        const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData.entries());
-
-        setLoading(button, true, 'Registering...');
-
->>>>>>> origin/palette-loading-state-8950687335011416181
         try {
             setLoading(submitBtn, true, 'Registering...');
             await apiRequest('/register', 'POST', data);

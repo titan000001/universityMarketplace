@@ -2,6 +2,7 @@
 import { apiRequest } from '../services/api.js';
 import { debounce } from '../utils/debounce.js';
 import { showToast } from '../utils/toast.js';
+import { setLoading } from '../utils/loading.js';
 
 const homeView = () => `
     <div class="relative bg-gray-900 text-white rounded-2xl overflow-hidden mb-12 shadow-2xl h-[400px] group">
@@ -176,10 +177,12 @@ const initHome = async () => {
         e.preventDefault();
         e.stopPropagation();
 
-        // UI Feedback
-        const originalContent = button.innerHTML;
-        button.disabled = true;
-        button.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+        // UI Feedback: Use setLoading utility
+        let loadingText = 'Processing...';
+        if (action === 'wishlist') loadingText = 'Adding...';
+        else if (action === 'contact') loadingText = 'Sending...';
+
+        setLoading(button, true, loadingText);
 
         try {
             if (action === 'wishlist') {
@@ -199,10 +202,7 @@ const initHome = async () => {
             console.error(err);
         } finally {
             // Restore button state
-            setTimeout(() => {
-                button.disabled = false;
-                button.innerHTML = originalContent;
-            }, 500);
+            setLoading(button, false);
         }
     });
 
